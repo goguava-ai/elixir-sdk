@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Run mix inside the pinned Elixir toolchain container against this repo.
+#
+# Local (non-Docker) dev is the primary workflow — see README "Local
+# development". This wrapper is the optional container fallback.
+#
+# _build and deps live in named volumes (not the mounted tree) so the container
+# never writes root-owned artifacts into the repo and never clobbers the native
+# _build/deps. The hex/mix caches are volumes too, so repeated fetches are fast.
+# If a repo-root .env exists, its variables are parsed (tolerating surrounding
+# quotes, CRLF, and whitespace) and passed in (for GUAVA_API_KEY etc.).
+set -euo pipefail
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+ENV_ARGS=()
+if [[ -f "$REPO/.env" ]]; then
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    line="${line%$'\r'}"                       # strip trailing CR (CRLF files)
+    [[ -z "$line" || "$line" == \#* ]] && continue
+    [[ "$line" != *=* ]] && continue
+    key="${line%%=*}"
+    val="${line#*=}"
+    key="${key//[[:space:]]/}"                  # keys never contain spaces
+    val="${val#"${val%%[![:space:]]*}"}"        # trim leading whitespace
+    val="${val%"${val##*[![:space:]]}"}"        # trim trailing whitespace
+    val="${val#\"}"; val="${val%\"}"            # strip surrounding double quotes
+    val="${val#\'}"; val="${val%\'}"            # strip surrounding single quotes
+    ENV_ARGS+=(-e "$key=$val")
+  done < "$REPO/.env"
+fi
+
+exec docker run --rm -t \
+  -v "$REPO":/app \
+  -v guava-elixir-build:/app/_build \
+  -v guava-elixir-deps:/app/deps \
+  -v guava-elixir-hex:/root/.hex \
+  -v guava-elixir-mix:/root/.mix \
+  -w /app \
+  -e MIX_ENV="${MIX_ENV:-dev}" \
+  "${ENV_ARGS[@]}" \
+  guava-elixir-dev mix "$@"

@@ -1,0 +1,19 @@
+/_build/
+/cover/
+/deps/
+/doc/
+/.fetch
+erl_crash.dump
+*.ez
+*.beam
+/config/*.secret.exs
+.elixir_ls/
+.venv-guava/
+guava-*.tar
+.env
+.env.*
+!.env.example
+
+# Customer-specific example — shipped separately as a .zip, never in the public repo
+/examples/inbound_receptionist/
+*.zip

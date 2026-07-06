@@ -1,0 +1,10 @@
+# Dev/test toolchain for the Guava Elixir SDK.
+# We build on the official image and preinstall hex + rebar so `mix` works
+# fully offline-of-sudo. The repo is bind-mounted at /app; deps and _build
+# land in the mounted tree and are cached on the host between runs.
+FROM elixir:1.18-otp-27
+
+RUN mix local.hex --force && mix local.rebar --force
+
+WORKDIR /app
+CMD ["mix", "test"]

@@ -1,0 +1,795 @@
+{
+  "commands": {
+    "accept_inbound": {
+      "dump": {
+        "command_type": "accept-inbound"
+      },
+      "json": "{\"command_type\":\"accept-inbound\"}"
+    },
+    "action_suggestion_empty": {
+      "dump": {
+        "action_description": "",
+        "action_key": null,
+        "actions": [],
+        "command_type": "action-suggestion",
+        "intent_id": "i1"
+      },
+      "json": "{\"command_type\":\"action-suggestion\",\"intent_id\":\"i1\",\"action_key\":null,\"action_description\":\"\",\"actions\":[]}"
+    },
+    "action_suggestion_legacy": {
+      "dump": {
+        "action_description": "d",
+        "action_key": "sales",
+        "actions": [
+          {
+            "description": "d",
+            "key": "sales"
+          }
+        ],
+        "command_type": "action-suggestion",
+        "intent_id": "i1"
+      },
+      "json": "{\"command_type\":\"action-suggestion\",\"intent_id\":\"i1\",\"action_key\":\"sales\",\"action_description\":\"d\",\"actions\":[{\"key\":\"sales\",\"description\":\"d\"}]}"
+    },
+    "action_suggestion_multi": {
+      "dump": {
+        "action_description": "",
+        "action_key": null,
+        "actions": [
+          {
+            "description": "d",
+            "key": "a"
+          },
+          {
+            "description": "",
+            "key": "b"
+          }
+        ],
+        "command_type": "action-suggestion",
+        "intent_id": "i1"
+      },
+      "json": "{\"command_type\":\"action-suggestion\",\"intent_id\":\"i1\",\"action_key\":null,\"action_description\":\"\",\"actions\":[{\"key\":\"a\",\"description\":\"d\"},{\"key\":\"b\",\"description\":\"\"}]}"
+    },
+    "answer_question": {
+      "dump": {
+        "answer": "42",
+        "command_type": "answer-question",
+        "question_id": "q1"
+      },
+      "json": "{\"command_type\":\"answer-question\",\"question_id\":\"q1\",\"answer\":\"42\"}"
+    },
+    "choice_result": {
+      "dump": {
+        "command_type": "choice-query-result",
+        "field_key": "slot",
+        "matched_choices": [
+          "a"
+        ],
+        "other_choices": [
+          "b",
+          "c"
+        ],
+        "query_id": "q9"
+      },
+      "json": "{\"command_type\":\"choice-query-result\",\"field_key\":\"slot\",\"query_id\":\"q9\",\"matched_choices\":[\"a\"],\"other_choices\":[\"b\",\"c\"]}"
+    },
+    "expert_error": {
+      "dump": {
+        "command_type": "expert-error",
+        "message": "boom"
+      },
+      "json": "{\"command_type\":\"expert-error\",\"message\":\"boom\"}"
+    },
+    "listen_inbound": {
+      "dump": {
+        "agent_number": "+14155550100",
+        "command_type": "listen-inbound",
+        "sip_code": null,
+        "webrtc_code": null
+      },
+      "json": "{\"command_type\":\"listen-inbound\",\"agent_number\":\"+14155550100\",\"webrtc_code\":null,\"sip_code\":null}"
+    },
+    "read_script": {
+      "dump": {
+        "command_type": "read-script",
+        "script": "Hello"
+      },
+      "json": "{\"command_type\":\"read-script\",\"script\":\"Hello\"}"
+    },
+    "reconnect_outbound": {
+      "dump": {
+        "command_type": "reconnect-outbound",
+        "highest_seen_sequence": 7,
+        "session_id": "sess_1"
+      },
+      "json": "{\"command_type\":\"reconnect-outbound\",\"session_id\":\"sess_1\",\"highest_seen_sequence\":7}"
+    },
+    "registered_hooks": {
+      "dump": {
+        "command_type": "registered-hooks",
+        "has_on_action_requested": true,
+        "has_on_escalate": false,
+        "has_on_intent": false,
+        "has_on_question": true
+      },
+      "json": "{\"command_type\":\"registered-hooks\",\"has_on_question\":true,\"has_on_intent\":false,\"has_on_action_requested\":true,\"has_on_escalate\":false}"
+    },
+    "reject_inbound": {
+      "dump": {
+        "command_type": "reject-inbound"
+      },
+      "json": "{\"command_type\":\"reject-inbound\"}"
+    },
+    "retry_task": {
+      "dump": {
+        "command_type": "retry-task",
+        "reason": "bad"
+      },
+      "json": "{\"command_type\":\"retry-task\",\"reason\":\"bad\"}"
+    },
+    "send_caller_text": {
+      "dump": {
+        "command_type": "send-caller-text",
+        "text": "hi"
+      },
+      "json": "{\"command_type\":\"send-caller-text\",\"text\":\"hi\"}"
+    },
+    "send_instruction": {
+      "dump": {
+        "command_type": "send-instruction",
+        "instruction": "Do the thing"
+      },
+      "json": "{\"command_type\":\"send-instruction\",\"instruction\":\"Do the thing\"}"
+    },
+    "set_agent_dtmf": {
+      "dump": {
+        "command_type": "set-agent-dtmf",
+        "enabled": true
+      },
+      "json": "{\"command_type\":\"set-agent-dtmf\",\"enabled\":true}"
+    },
+    "set_language_mode": {
+      "dump": {
+        "command_type": "set-language-mode",
+        "primary": "english",
+        "secondary": [
+          "spanish"
+        ]
+      },
+      "json": "{\"command_type\":\"set-language-mode\",\"primary\":\"english\",\"secondary\":[\"spanish\"]}"
+    },
+    "set_language_mode_default": {
+      "dump": {
+        "command_type": "set-language-mode",
+        "primary": "english",
+        "secondary": []
+      },
+      "json": "{\"command_type\":\"set-language-mode\",\"primary\":\"english\",\"secondary\":[]}"
+    },
+    "set_persona": {
+      "dump": {
+        "agent_name": "Nova",
+        "agent_purpose": "help",
+        "command_type": "set-persona",
+        "organization_name": "Acme",
+        "voice": "alloy"
+      },
+      "json": "{\"command_type\":\"set-persona\",\"agent_name\":\"Nova\",\"organization_name\":\"Acme\",\"agent_purpose\":\"help\",\"voice\":\"alloy\"}"
+    },
+    "set_persona_empty": {
+      "dump": {
+        "agent_name": null,
+        "agent_purpose": null,
+        "command_type": "set-persona",
+        "organization_name": null,
+        "voice": null
+      },
+      "json": "{\"command_type\":\"set-persona\",\"agent_name\":null,\"organization_name\":null,\"agent_purpose\":null,\"voice\":null}"
+    },
+    "set_task": {
+      "dump": {
+        "action_items": [
+          {
+            "choices": [],
+            "description": "their name",
+            "field_type": "text",
+            "is_search_field": false,
+            "item_type": "field",
+            "key": "name",
+            "question": "",
+            "required": true
+          },
+          {
+            "item_type": "say",
+            "key": "g1",
+            "statement": "Hi there"
+          },
+          {
+            "description": "Verify identity",
+            "item_type": "todo",
+            "key": "t1"
+          }
+        ],
+        "command_type": "set-task",
+        "completion_criteria": "done",
+        "objective": "Collect info",
+        "task_id": "abc123"
+      },
+      "json": "{\"command_type\":\"set-task\",\"task_id\":\"abc123\",\"objective\":\"Collect info\",\"completion_criteria\":\"done\",\"action_items\":[{\"item_type\":\"field\",\"key\":\"name\",\"description\":\"their name\",\"question\":\"\",\"field_type\":\"text\",\"required\":true,\"choices\":[],\"is_search_field\":false},{\"item_type\":\"say\",\"statement\":\"Hi there\",\"key\":\"g1\"},{\"item_type\":\"todo\",\"key\":\"t1\",\"description\":\"Verify identity\"}]}"
+    },
+    "set_task_min": {
+      "dump": {
+        "action_items": [],
+        "command_type": "set-task",
+        "completion_criteria": null,
+        "objective": "o",
+        "task_id": "t"
+      },
+      "json": "{\"command_type\":\"set-task\",\"task_id\":\"t\",\"objective\":\"o\",\"completion_criteria\":null,\"action_items\":[]}"
+    },
+    "set_variable": {
+      "dump": {
+        "command_type": "set-variable",
+        "key": "k",
+        "value": {
+          "nested": [
+            1,
+            2,
+            "x"
+          ]
+        }
+      },
+      "json": "{\"command_type\":\"set-variable\",\"key\":\"k\",\"value\":{\"nested\":[1,2,\"x\"]}}"
+    },
+    "set_variable_scalar": {
+      "dump": {
+        "command_type": "set-variable",
+        "key": "k",
+        "value": 5
+      },
+      "json": "{\"command_type\":\"set-variable\",\"key\":\"k\",\"value\":5}"
+    },
+    "start_outbound": {
+      "dump": {
+        "command_type": "start-outbound",
+        "from_number": "+14155550100",
+        "to_number": "+14155550111"
+      },
+      "json": "{\"command_type\":\"start-outbound\",\"from_number\":\"+14155550100\",\"to_number\":\"+14155550111\"}"
+    },
+    "start_outbound_no_from": {
+      "dump": {
+        "command_type": "start-outbound",
+        "from_number": null,
+        "to_number": "+14155550111"
+      },
+      "json": "{\"command_type\":\"start-outbound\",\"from_number\":null,\"to_number\":\"+14155550111\"}"
+    },
+    "transfer_call": {
+      "dump": {
+        "command_type": "transfer-call",
+        "soft_transfer": true,
+        "to_number": "+14155550999",
+        "transfer_message": "transferring"
+      },
+      "json": "{\"command_type\":\"transfer-call\",\"transfer_message\":\"transferring\",\"to_number\":\"+14155550999\",\"soft_transfer\":true}"
+    }
+  },
+  "events": {
+    "action_item_done": {
+      "dump": {
+        "event_type": "action-item-done",
+        "key": "name",
+        "payload": {
+          "value": "Bob"
+        },
+        "sequence": null
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"action-item-done\",\"key\":\"name\",\"payload\":{\"value\":\"Bob\"}}"
+    },
+    "action_request": {
+      "dump": {
+        "event_type": "action-request",
+        "intent_id": "i1",
+        "intent_summary": "wants X",
+        "sequence": null
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"action-request\",\"intent_id\":\"i1\",\"intent_summary\":\"wants X\"}"
+    },
+    "agent_question": {
+      "dump": {
+        "event_type": "agent-question",
+        "question": "what?",
+        "question_id": "q1",
+        "sequence": null
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"agent-question\",\"question_id\":\"q1\",\"question\":\"what?\"}"
+    },
+    "agent_speech": {
+      "dump": {
+        "event_type": "agent-speech",
+        "interrupted": true,
+        "sequence": null,
+        "utterance": "hi"
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"agent-speech\",\"utterance\":\"hi\",\"interrupted\":true}"
+    },
+    "agent_speech_min": {
+      "dump": {
+        "event_type": "agent-speech",
+        "interrupted": false,
+        "sequence": null,
+        "utterance": "hi"
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"agent-speech\",\"utterance\":\"hi\",\"interrupted\":false}"
+    },
+    "bot_session_ended": {
+      "dump": {
+        "event_type": "bot-session-ended",
+        "sequence": null,
+        "termination_reason": "user-hangup"
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"bot-session-ended\",\"termination_reason\":\"user-hangup\"}"
+    },
+    "caller_speech": {
+      "dump": {
+        "event_type": "caller-speech",
+        "sequence": null,
+        "utterance": "hello",
+        "utterance_id": "u1"
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"caller-speech\",\"utterance\":\"hello\",\"utterance_id\":\"u1\"}"
+    },
+    "caller_speech_min": {
+      "dump": {
+        "event_type": "caller-speech",
+        "sequence": null,
+        "utterance": "hello",
+        "utterance_id": null
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"caller-speech\",\"utterance\":\"hello\",\"utterance_id\":null}"
+    },
+    "choice_query": {
+      "dump": {
+        "event_type": "choice-query",
+        "field_key": "slot",
+        "query": "mornings",
+        "query_id": "q9",
+        "sequence": null
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"choice-query\",\"field_key\":\"slot\",\"query\":\"mornings\",\"query_id\":\"q9\"}"
+    },
+    "dtmf": {
+      "dump": {
+        "digit": "5",
+        "event_type": "dtmf",
+        "sequence": null
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"dtmf\",\"digit\":\"5\"}"
+    },
+    "error": {
+      "dump": {
+        "content": "oops",
+        "event_type": "error",
+        "sequence": null
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"error\",\"content\":\"oops\"}"
+    },
+    "escalate": {
+      "dump": {
+        "event_type": "escalate",
+        "requested_by": "agent",
+        "sequence": null
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"escalate\",\"requested_by\":\"agent\"}"
+    },
+    "escalate_default": {
+      "dump": {
+        "event_type": "escalate",
+        "requested_by": "human",
+        "sequence": null
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"escalate\",\"requested_by\":\"human\"}"
+    },
+    "execute_action": {
+      "dump": {
+        "action_key": "sales",
+        "event_type": "execute-action",
+        "sequence": null
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"execute-action\",\"action_key\":\"sales\"}"
+    },
+    "inbound_call": {
+      "dump": {
+        "agent_number": "+14155550111",
+        "caller_number": "+14155550100",
+        "event_type": "inbound-call",
+        "sequence": null
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"inbound-call\",\"caller_number\":\"+14155550100\",\"agent_number\":\"+14155550111\"}"
+    },
+    "inbound_call_empty": {
+      "dump": {
+        "agent_number": null,
+        "caller_number": null,
+        "event_type": "inbound-call",
+        "sequence": null
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"inbound-call\",\"caller_number\":null,\"agent_number\":null}"
+    },
+    "intent": {
+      "dump": {
+        "event_type": "intent",
+        "intent_id": "i1",
+        "intent_summary": "wants X",
+        "sequence": null
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"intent\",\"intent_id\":\"i1\",\"intent_summary\":\"wants X\"}"
+    },
+    "outbound_connected": {
+      "dump": {
+        "event_type": "outbound-call-connected",
+        "sequence": null
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"outbound-call-connected\"}"
+    },
+    "outbound_failed": {
+      "dump": {
+        "error_code": 486,
+        "error_reason": "busy",
+        "event_type": "outbound-call-failed",
+        "sequence": null
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"outbound-call-failed\",\"error_code\":486,\"error_reason\":\"busy\"}"
+    },
+    "socket_health": {
+      "dump": {
+        "event_type": "socket-health",
+        "sequence": null
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"socket-health\"}"
+    },
+    "task_done": {
+      "dump": {
+        "event_type": "task-done",
+        "sequence": null,
+        "task_id": "t1"
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"task-done\",\"task_id\":\"t1\"}"
+    },
+    "warning": {
+      "dump": {
+        "content": "careful",
+        "event_type": "warning",
+        "sequence": null
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"warning\",\"content\":\"careful\"}"
+    },
+    "with_sequence": {
+      "dump": {
+        "event_type": "caller-speech",
+        "sequence": 3,
+        "utterance": "x",
+        "utterance_id": null
+      },
+      "json": "{\"sequence\":3,\"event_type\":\"caller-speech\",\"utterance\":\"x\",\"utterance_id\":null}"
+    }
+  },
+  "frames": {
+    "ack": {
+      "dump": {
+        "last_seen_sequence": 9,
+        "message_type": "ack"
+      },
+      "json": "{\"message_type\":\"ack\",\"last_seen_sequence\":9}"
+    },
+    "close": {
+      "dump": {
+        "description": "bye",
+        "message_type": "close",
+        "reason": "done"
+      },
+      "json": "{\"message_type\":\"close\",\"reason\":\"done\",\"description\":\"bye\"}"
+    },
+    "message": {
+      "dump": {
+        "message_type": "message",
+        "payload": {
+          "command_type": "read-script",
+          "script": "x"
+        },
+        "sequence": 4
+      },
+      "json": "{\"message_type\":\"message\",\"sequence\":4,\"payload\":{\"command_type\":\"read-script\",\"script\":\"x\"}}"
+    },
+    "open": {
+      "dump": {
+        "connection_id": "deadbeef",
+        "is_reopen": false,
+        "last_seen_sequence": 0,
+        "message_type": "open",
+        "name": "call-1"
+      },
+      "json": "{\"message_type\":\"open\",\"name\":\"call-1\",\"connection_id\":\"deadbeef\",\"is_reopen\":false,\"last_seen_sequence\":0}"
+    },
+    "open_ack": {
+      "dump": {
+        "is_reopen": true,
+        "last_seen_sequence": 5,
+        "message_type": "open-ack"
+      },
+      "json": "{\"message_type\":\"open-ack\",\"is_reopen\":true,\"last_seen_sequence\":5}"
+    },
+    "ping": {
+      "dump": {
+        "message_type": "ping",
+        "ping_timestamp": 1717171717000
+      },
+      "json": "{\"message_type\":\"ping\",\"ping_timestamp\":1717171717000}"
+    },
+    "pong": {
+      "dump": {
+        "message_type": "pong",
+        "ping_timestamp": 1717171717000,
+        "pong_timestamp": 1717171717050
+      },
+      "json": "{\"message_type\":\"pong\",\"ping_timestamp\":1717171717000,\"pong_timestamp\":1717171717050}"
+    }
+  },
+  "misc": {
+    "gd_controller_ready": {
+      "dump": {
+        "call_id": "c1",
+        "message_type": "controller-ready"
+      },
+      "json": "{\"message_type\":\"controller-ready\",\"call_id\":\"c1\"}"
+    },
+    "gd_init_failed": {
+      "dump": {
+        "call_id": "c1",
+        "message_type": "init-controller-failed"
+      },
+      "json": "{\"message_type\":\"init-controller-failed\",\"call_id\":\"c1\"}"
+    },
+    "gd_initiate": {
+      "dump": {
+        "call_id": "c1",
+        "contact_data": {
+          "data": {
+            "name": "Bob"
+          },
+          "phone_number": "+14155550100"
+        },
+        "message_type": "initiate-and-assign-call"
+      },
+      "json": "{\"message_type\":\"initiate-and-assign-call\",\"call_id\":\"c1\",\"contact_data\":{\"phone_number\":\"+14155550100\",\"data\":{\"name\":\"Bob\"}}}"
+    },
+    "gd_listen_started": {
+      "dump": {
+        "message_type": "listen-started",
+        "other_listeners": 0
+      },
+      "json": "{\"message_type\":\"listen-started\",\"other_listeners\":0}"
+    },
+    "li_answer": {
+      "dump": {
+        "call_id": "c1",
+        "message_type": "answer-call"
+      },
+      "json": "{\"message_type\":\"answer-call\",\"call_id\":\"c1\"}"
+    },
+    "li_assign_pstn": {
+      "dump": {
+        "call_id": "c1",
+        "call_info": {
+          "call_type": "pstn",
+          "caller_id": null,
+          "from_number": "+14155550100",
+          "to_number": "+14155550111"
+        },
+        "message_type": "assign-call"
+      },
+      "json": "{\"message_type\":\"assign-call\",\"call_id\":\"c1\",\"call_info\":{\"call_type\":\"pstn\",\"from_number\":\"+14155550100\",\"to_number\":\"+14155550111\",\"caller_id\":null}}"
+    },
+    "li_assign_sip": {
+      "dump": {
+        "call_id": "c1",
+        "call_info": {
+          "call_type": "sip",
+          "from_aor": "sip:a@b",
+          "sip_code": "s1",
+          "sip_headers": {}
+        },
+        "message_type": "assign-call"
+      },
+      "json": "{\"message_type\":\"assign-call\",\"call_id\":\"c1\",\"call_info\":{\"call_type\":\"sip\",\"from_aor\":\"sip:a@b\",\"sip_code\":\"s1\",\"sip_headers\":{}}}"
+    },
+    "li_assign_webrtc": {
+      "dump": {
+        "call_id": "c1",
+        "call_info": {
+          "call_type": "webrtc",
+          "webrtc_code": "w1"
+        },
+        "message_type": "assign-call"
+      },
+      "json": "{\"message_type\":\"assign-call\",\"call_id\":\"c1\",\"call_info\":{\"call_type\":\"webrtc\",\"webrtc_code\":\"w1\"}}"
+    },
+    "li_claim": {
+      "dump": {
+        "call_id": "c1",
+        "message_type": "claim-call"
+      },
+      "json": "{\"message_type\":\"claim-call\",\"call_id\":\"c1\"}"
+    },
+    "li_decline": {
+      "dump": {
+        "call_id": "c1",
+        "message_type": "decline-call"
+      },
+      "json": "{\"message_type\":\"decline-call\",\"call_id\":\"c1\"}"
+    },
+    "li_incoming_call": {
+      "dump": {
+        "call_id": "c1",
+        "message_type": "incoming-call"
+      },
+      "json": "{\"message_type\":\"incoming-call\",\"call_id\":\"c1\"}"
+    },
+    "li_listen_started": {
+      "dump": {
+        "message_type": "listen-started",
+        "other_listeners": 2
+      },
+      "json": "{\"message_type\":\"listen-started\",\"other_listeners\":2}"
+    },
+    "tp_bot_tts": {
+      "dump": {
+        "message_type": "bot-tts",
+        "transcript": "hi there"
+      },
+      "json": "{\"message_type\":\"bot-tts\",\"transcript\":\"hi there\"}"
+    },
+    "tp_inject_asr": {
+      "dump": {
+        "message_type": "inject-asr",
+        "utterance": "hello"
+      },
+      "json": "{\"message_type\":\"inject-asr\",\"utterance\":\"hello\"}"
+    },
+    "tp_ping": {
+      "dump": {
+        "message_type": "ping"
+      },
+      "json": "{\"message_type\":\"ping\"}"
+    },
+    "tp_pong": {
+      "dump": {
+        "message_type": "pong"
+      },
+      "json": "{\"message_type\":\"pong\"}"
+    },
+    "tp_session_started": {
+      "dump": {
+        "message_type": "session-started",
+        "session_id": "s1"
+      },
+      "json": "{\"message_type\":\"session-started\",\"session_id\":\"s1\"}"
+    },
+    "tp_turn_started": {
+      "dump": {
+        "message_type": "caller-turn-started",
+        "request_id": "r1"
+      },
+      "json": "{\"message_type\":\"caller-turn-started\",\"request_id\":\"r1\"}"
+    },
+    "tp_wait_for_turn": {
+      "dump": {
+        "message_type": "wait-for-caller-turn",
+        "request_id": "r1"
+      },
+      "json": "{\"message_type\":\"wait-for-caller-turn\",\"request_id\":\"r1\"}"
+    }
+  },
+  "types": {
+    "accept": {
+      "dump": {
+        "call_action": "accept"
+      },
+      "json": "{\"call_action\":\"accept\"}"
+    },
+    "decline": {
+      "dump": {
+        "call_action": "decline"
+      },
+      "json": "{\"call_action\":\"decline\"}"
+    },
+    "field_default": {
+      "dump": {
+        "choice_generator": null,
+        "choices": [],
+        "description": "",
+        "field_type": "text",
+        "item_type": "field",
+        "key": "k",
+        "question": "",
+        "required": true,
+        "searchable": false
+      },
+      "json": "{\"item_type\":\"field\",\"key\":\"k\",\"description\":\"\",\"question\":\"\",\"field_type\":\"text\",\"required\":true,\"choices\":[],\"choice_generator\":null,\"searchable\":false}"
+    },
+    "field_full": {
+      "dump": {
+        "choice_generator": null,
+        "choices": [
+          "a",
+          "b"
+        ],
+        "description": "d",
+        "field_type": "multiple_choice",
+        "item_type": "field",
+        "key": "k",
+        "question": "q",
+        "required": false,
+        "searchable": false
+      },
+      "json": "{\"item_type\":\"field\",\"key\":\"k\",\"description\":\"d\",\"question\":\"q\",\"field_type\":\"multiple_choice\",\"required\":false,\"choices\":[\"a\",\"b\"],\"choice_generator\":null,\"searchable\":false}"
+    },
+    "pstn": {
+      "dump": {
+        "call_type": "pstn",
+        "caller_id": "Bob",
+        "from_number": "+14155550100",
+        "to_number": "+14155550111"
+      },
+      "json": "{\"call_type\":\"pstn\",\"from_number\":\"+14155550100\",\"to_number\":\"+14155550111\",\"caller_id\":\"Bob\"}"
+    },
+    "say": {
+      "dump": {
+        "item_type": "say",
+        "key": "s1",
+        "statement": "hello"
+      },
+      "json": "{\"item_type\":\"say\",\"statement\":\"hello\",\"key\":\"s1\"}"
+    },
+    "serializable_field": {
+      "dump": {
+        "choices": [],
+        "description": "",
+        "field_type": "text",
+        "is_search_field": true,
+        "item_type": "field",
+        "key": "k",
+        "question": "",
+        "required": true
+      },
+      "json": "{\"item_type\":\"field\",\"key\":\"k\",\"description\":\"\",\"question\":\"\",\"field_type\":\"text\",\"required\":true,\"choices\":[],\"is_search_field\":true}"
+    },
+    "sip": {
+      "dump": {
+        "call_type": "sip",
+        "from_aor": "sip:a@b",
+        "sip_code": "s1",
+        "sip_headers": {
+          "X": "Y"
+        }
+      },
+      "json": "{\"call_type\":\"sip\",\"from_aor\":\"sip:a@b\",\"sip_code\":\"s1\",\"sip_headers\":{\"X\":\"Y\"}}"
+    },
+    "todo": {
+      "dump": {
+        "description": "do it",
+        "item_type": "todo",
+        "key": "t1"
+      },
+      "json": "{\"item_type\":\"todo\",\"key\":\"t1\",\"description\":\"do it\"}"
+    },
+    "webrtc": {
+      "dump": {
+        "call_type": "webrtc",
+        "webrtc_code": "w1"
+      },
+      "json": "{\"call_type\":\"webrtc\",\"webrtc_code\":\"w1\"}"
+    }
+  }
+}
