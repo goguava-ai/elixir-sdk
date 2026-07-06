@@ -107,4 +107,3 @@ Guava.listen_phone(MyAgent, "+14155550123")
 ```
 
 Next: [Calls](calls.md) · [Handlers](handlers.md).
-</content>

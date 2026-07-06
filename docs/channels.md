@@ -108,4 +108,3 @@ Guava.call_phone(Scheduler, "+14155550100", "+16285550123", %{"customer_name" =>
 ```
 
 Next: [Campaigns](campaigns.md).
-</content>

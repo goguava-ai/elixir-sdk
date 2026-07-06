@@ -61,4 +61,3 @@ directly. For a full call loop with recorded commands, drive
 `test/guava/agent_test.exs`).
 
 Next: [Deployment](deployment.md).
-</content>

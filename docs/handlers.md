@@ -129,4 +129,3 @@ end
 ```
 
 Next: [Channels](channels.md).
-</content>

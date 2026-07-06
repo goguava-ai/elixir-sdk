@@ -49,4 +49,14 @@ concepts and wire protocol but adapts the **public API to idiomatic Elixir**
 - **Local RAG vector-store backends** are expressed as the
   `Guava.RAG.VectorStore`/`GenerationModel` behaviours; server-mode RAG is fully
   ported.
-</content>
+
+## Keeping in sync with the Python SDK
+
+The Python version this port currently matches is recorded in
+[`.upstream-sync.json`](.upstream-sync.json). To see what has changed upstream
+since then, run the **`check-upstream-parity`** Claude skill (in
+`.claude/skills/`): it diffs the tracked version against the latest `guava-sdk`
+on PyPI (handling being several releases behind), empirically checks for
+wire-protocol drift by regenerating fixtures, and writes a prioritized,
+read-only report under `sync/`. It never edits the SDK — reconciling the changes
+is a deliberate follow-up. After reconciling, bump `.upstream-sync.json`.

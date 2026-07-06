@@ -75,4 +75,3 @@ end)
 See [Testing](testing.md) for LLM-roleplayed callers and pass/fail evaluation.
 
 Next: [Agents](agents.md).
-</content>

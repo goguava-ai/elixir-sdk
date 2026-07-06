@@ -68,4 +68,3 @@ Each call process sets `Logger.metadata(call_id: ...)` for correlated logs.
 
 `mix docs` generates the HTML API reference from the moduledocs and includes
 these guides as extras.
-</content>
