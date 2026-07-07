@@ -27,19 +27,20 @@ Requires Elixir ~> 1.15 and Erlang/OTP 26+.
 ## Documentation
 
 Full guides live in [`docs/`](docs/README.md):
-[Architecture](docs/architecture.md) ·
-[Getting started](docs/getting-started.md) ·
-[Agents](docs/agents.md) ·
-[Calls](docs/calls.md) ·
-[Tasks & Fields](docs/tasks-and-fields.md) ·
-[Handlers](docs/handlers.md) ·
-[Channels](docs/channels.md) ·
-[Campaigns](docs/campaigns.md) ·
-[Messaging](docs/messaging.md) ·
-[Client](docs/client.md) ·
-[RAG & LLM](docs/rag-and-llm.md) ·
-[Testing](docs/testing.md) ·
-[Deployment](docs/deployment.md).
+
+- [Architecture](docs/architecture.md)
+- [Getting started](docs/getting-started.md)
+- [Agents](docs/agents.md)
+- [Calls](docs/calls.md)
+- [Tasks & Fields](docs/tasks-and-fields.md)
+- [Handlers](docs/handlers.md)
+- [Channels](docs/channels.md)
+- [Campaigns](docs/campaigns.md)
+- [Messaging](docs/messaging.md)
+- [Client](docs/client.md)
+- [RAG & LLM](docs/rag-and-llm.md)
+- [Testing](docs/testing.md)
+- [Deployment](docs/deployment.md)
 
 ## Authentication
 
