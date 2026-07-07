@@ -60,6 +60,34 @@ defmodule Guava.SocketIntegrationTest do
     assert_receive {:guava_socket, ^pid, {:closed, "state-lost", "server closing"}}, 2_000
   end
 
+  test "reconnects after a transport drop and retransmits unacked messages", %{url: url} do
+    # "test-noack": the server withholds acks, so a sent message stays in the
+    # client's retransmit buffer and is unacked when the connection drops.
+    {:ok, pid} = Socket.start_link(url: url, name: "test-noack", owner: self())
+
+    assert_receive {:guava_socket, ^pid, :ready}, 2_000
+    assert_receive {:server_recv, %Guava.Socket.Protocol.Open{is_reopen: false}}, 2_000
+    assert_receive {:server_opened, server_conn}, 2_000
+
+    # Send a payload; the server records it but does not ack it.
+    Socket.send_payload(pid, %{"n" => 1})
+
+    assert_receive {:server_recv, %Guava.Socket.Protocol.Message{sequence: 1, payload: %{"n" => 1}}},
+                   2_000
+
+    # Force a transport-level drop (no Guava Close frame).
+    send(server_conn, :server_drop)
+
+    # The socket reconnects, redoes the handshake as a reopen, retransmits the
+    # still-unacked message (same sequence), and reports ready again.
+    assert_receive {:server_recv, %Guava.Socket.Protocol.Open{is_reopen: true}}, 5_000
+
+    assert_receive {:server_recv, %Guava.Socket.Protocol.Message{sequence: 1, payload: %{"n" => 1}}},
+                   5_000
+
+    assert_receive {:guava_socket, ^pid, :ready}, 5_000
+  end
+
   test "client close notifies owner and stops the process", %{url: url} do
     pid = start_socket(url)
     assert_receive {:guava_socket, _pid, :ready}, 2_000

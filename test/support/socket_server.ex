@@ -35,6 +35,10 @@ defmodule Guava.Test.SocketServer do
      state}
   end
 
+  # Simulate a transport-level drop (no Guava Close frame), so the client
+  # reconnects rather than treating the socket as permanently closed.
+  def handle_info(:server_drop, state), do: {:stop, :normal, state}
+
   def handle_info(_msg, state), do: {:ok, state}
 
   @impl true
@@ -43,7 +47,14 @@ defmodule Guava.Test.SocketServer do
   defp on_frame(%Protocol.Open{is_reopen: r, name: name}, state) do
     ack = {:text, Protocol.encode!(%OpenAck{is_reopen: r, last_seen_sequence: 0})}
     forward(state, {:server_opened, self()})
-    mode = if name == "listen-inbound", do: :listen, else: :default
+    mode =
+      cond do
+        name == "listen-inbound" -> :listen
+        # Withhold acks so a sent message stays in the client's retransmit
+        # buffer — used to test reconnect retransmission.
+        name == "test-noack" -> :noack
+        true -> :default
+      end
     state = %{state | mode: mode}
 
     if mode == :listen do
@@ -97,6 +108,10 @@ defmodule Guava.Test.SocketServer do
     forward(state, {:answered, call_id})
     {:push, {:text, Protocol.encode!(%Ack{last_seen_sequence: seq})}, state}
   end
+
+  # No-ack mode: record the message (already forwarded by handle_in) but
+  # deliberately don't ack, leaving it in the client's retransmit buffer.
+  defp on_frame(%Message{}, %{mode: :noack} = state), do: {:ok, state}
 
   defp on_frame(%Message{sequence: seq, payload: payload}, state) do
     ack = {:text, Protocol.encode!(%Ack{last_seen_sequence: seq})}
