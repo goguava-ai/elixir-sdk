@@ -1,6 +1,6 @@
 # Guava Elixir SDK — Documentation
 
-Unofficial Elixir port of the [Guava](https://goguava.ai) voice-agent SDK.
+The Elixir SDK for the [Guava](https://goguava.ai) voice-agent platform.
 These guides mirror the [official Guava docs](https://goguava.ai/docs), adapted
 to Elixir idioms. For per-function API reference, see the moduledocs (rendered
 on HexDocs once published, or via `mix docs`).

@@ -4,7 +4,7 @@ defmodule Guava.MixProject do
   # Tracks the Python `guava-sdk` version this port mirrors (source of truth).
   # Bump in lockstep with the Python SDK; see PARITY.md and the README.
   @version "0.32.0"
-  @source_url "https://github.com/griffin-goguava-ai/guava-elixir-community-sdk"
+  @source_url "https://github.com/goguava-ai/elixir-sdk"
 
   def project do
     [
@@ -49,7 +49,7 @@ defmodule Guava.MixProject do
   end
 
   defp description do
-    "Unofficial Elixir port of the Guava voice-agent SDK."
+    "Elixir SDK for the Guava voice-agent platform."
   end
 
   defp package do

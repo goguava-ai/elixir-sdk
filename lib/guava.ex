@@ -1,6 +1,6 @@
 defmodule Guava do
   @moduledoc """
-  Unofficial Elixir port of the [Guava](https://goguava.ai) voice-agent SDK.
+  The Elixir SDK for the [Guava](https://goguava.ai) voice-agent platform.
 
   Two layers:
 

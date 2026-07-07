@@ -4,17 +4,15 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Elixir](https://img.shields.io/badge/Elixir-~%3E%201.15-663399)](.tool-versions)
 
-Unofficial Elixir port of the [Guava](https://goguava.ai) voice-agent SDK.
+The Elixir SDK for the [Guava](https://goguava.ai) voice-agent platform.
 
-**Ports the [Guava Python SDK](https://github.com/goguava-ai/python-sdk)
-`v0.32.0`.** The Elixir package version tracks the Python version it mirrors, so
+**Tracks the [Guava Python SDK](https://github.com/goguava-ai/python-sdk)
+`v0.32.0`.** The Elixir package version mirrors the Python version it tracks, so
 `~> 0.32` here corresponds to Python `0.32.x`.
 
-> **Community project — not an official Guava product.** This SDK is unofficial
-> and community-maintained. It is **not built, endorsed, or supported by Guava**
-> in any capacity, and comes with no warranty or support. The Python
-> `guava-sdk` (**v0.32.0**) is the source of truth; the public API is adapted to
-> idiomatic Elixir (see [`PARITY.md`](PARITY.md)).
+> Community-maintained and actively developed. Support is best-effort — issues
+> and pull requests are welcome. The public API is adapted to idiomatic Elixir;
+> see [`PARITY.md`](PARITY.md) for how it maps to the Python SDK.
 
 ## Installation
 
