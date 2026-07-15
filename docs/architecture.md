@@ -28,7 +28,7 @@ The SDK layers map onto that picture:
 | --- | --- | --- |
 | Transport | `Guava.Socket`, `Guava.Socket.Reliable` | A reliable, self-reconnecting WebSocket with sequence numbers, acks, retransmission, and keepalive. |
 | Wire protocol | `Guava.Events`, `Guava.Commands` | Byte-for-byte compatible encodings of the events/commands exchanged with the Dialog System. |
-| Runtime | `Guava.Call.Runtime` | One OTP process per live call. Owns the socket + a per-call ETS table (fields/variables), threads your agent's state, and dispatches events to your callbacks. |
+| Runtime | Guava.Call.Runtime *(internal)* | One OTP process per live call. Owns the socket + a per-call ETS table (fields/variables), threads your agent's state, and dispatches events to your callbacks. |
 | Channels | `Guava.Channel`, `Guava.run/1` | Supervised listeners (phone/WebRTC/SIP/campaign/outbound) that start a runtime per call. |
 | Your Expert | `Guava.Agent`, `Guava.Call` | The API you write against: a behaviour module + a handle to steer the call. |
 | Account API | `Guava.Client`, `Guava.Campaigns` | HTTP operations: phone numbers, SMS, outbound creation, campaigns. |

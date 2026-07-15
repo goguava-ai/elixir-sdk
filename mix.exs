@@ -82,6 +82,7 @@ defmodule Guava.MixProject do
         "docs/rag-and-llm.md",
         "docs/testing.md",
         "docs/deployment.md",
+        "docs/local-development.md",
         "PARITY.md"
       ],
       groups_for_extras: [

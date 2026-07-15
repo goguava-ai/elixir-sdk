@@ -56,8 +56,8 @@ This repo excludes `@tag :live` by default; run with `mix test --include live`.
 ### Unit-testing your callbacks without the network
 
 Because callbacks are plain functions on a module, most logic is testable
-directly. For a full call loop with recorded commands, drive
-`Guava.Call.Runtime` with an injected `:emit` function (see the SDK's own
+directly. For a full call loop with recorded commands, drive the internal
+Guava.Call.Runtime with an injected `:emit` function (see the SDK's own
 `test/guava/agent_test.exs`).
 
 Next: [Deployment](deployment.md).

@@ -7,7 +7,7 @@ defmodule Guava.Field do
 
   Field types requiring options (`"multiple_choice"`, `"calendar_slot"`) must
   supply either `:choices` (a small static list) or set `:searchable` and
-  register a handler via `Guava.Agent.on_search_query/3`.
+  register a handler via `c:Guava.Agent.handle_search_query/4`.
   """
   require Logger
 

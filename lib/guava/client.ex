@@ -82,8 +82,11 @@ defmodule Guava.Client do
   def create_sip_agent!(client), do: HTTP.request!(client, :post, "v1/sip-agents")["sip_code"]
 
   @doc """
-  Create an outbound call and return its `call_id`. This only creates the call;
-  attach an agent to handle it with `Guava.Agent.call_phone/4`.
+  Low-level helper: create an outbound call and return its `call_id` without
+  attaching an agent. Most code should instead place the call *and* run an agent
+  on it in one step, with `Guava.run/1` and a `Guava.Channel` outbound listener:
+
+      Guava.run({Guava.Channel, agent: MyAgent, outbound: {from, to, %{}}})
   """
   @spec create_outbound(t(), String.t(), String.t()) :: result(String.t())
   def create_outbound(client, from_number, to_number),

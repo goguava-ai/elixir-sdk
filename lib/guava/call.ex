@@ -205,8 +205,9 @@ defmodule Guava.Call do
 
   @doc """
   Reach a specific contact on an outbound call and record their availability
-  in the `contact_availability` field. Register `Guava.Agent.on_reach_person/2`
-  to react to the outcome.
+  in the `contact_availability` field. React to the outcome in
+  `c:Guava.Agent.handle_task_complete/3` (task id `"reach_person"`), reading the
+  `contact_availability` field with `get_field/2`.
 
   ## Options
     * `:greeting` — verbatim opening line.

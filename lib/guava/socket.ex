@@ -2,7 +2,7 @@ defmodule Guava.Socket do
   @moduledoc """
   A reliable, self-reconnecting GuavaSocket connection.
 
-  Wraps a WebSocket (`Guava.Socket.Conn`) and drives the pure reliable-protocol
+  Wraps a WebSocket connection and drives the pure reliable-protocol
   state machine (`Guava.Socket.Reliable`). It performs the open/open-ack
   handshake, retransmits unacked messages across reconnects, keeps the
   connection alive with pings, and reconnects with backoff — mirroring the

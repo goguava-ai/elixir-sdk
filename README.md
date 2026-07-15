@@ -1,8 +1,8 @@
 # Guava (Elixir)
 
 [![Guava Python SDK](https://img.shields.io/badge/Guava%20Python%20SDK-v0.34.0-6C4AB6)](PARITY.md)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Elixir](https://img.shields.io/badge/Elixir-~%3E%201.15-663399)](.tool-versions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/goguava-ai/elixir-sdk/blob/main/LICENSE)
+[![Elixir](https://img.shields.io/badge/Elixir-~%3E%201.15-663399)](https://github.com/goguava-ai/elixir-sdk/blob/main/.tool-versions)
 
 The Elixir SDK for the [Guava](https://goguava.ai) voice-agent platform.
 
@@ -128,7 +128,7 @@ end)
 ## Development
 
 Develop locally with the standard Elixir toolchain — no Docker required. The
-repo pins Erlang + Elixir in [`.tool-versions`](.tool-versions), so a version
+repo pins Erlang + Elixir in [`.tool-versions`](https://github.com/goguava-ai/elixir-sdk/blob/main/.tool-versions), so a version
 manager ([`mise`](https://mise.jdx.dev) or [`asdf`](https://asdf-vm.com)) sets
 you up with the exact toolchain:
 

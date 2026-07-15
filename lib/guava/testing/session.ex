@@ -4,7 +4,8 @@ defmodule Guava.Testing.Session do
 
   Inject caller utterances with `say/2`, wait for the agent's turn with
   `wait_for_turn/1`, read the running `get_transcript/1`, and assert outcomes
-  with `evaluate/2`. Created for you by `Guava.Agent.test/3`.
+  with `evaluate/2`. Created for you by `Guava.Testing.session/3` and
+  `Guava.Testing.roleplay/3`.
   """
   use GenServer
   require Logger

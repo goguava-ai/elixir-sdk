@@ -5,7 +5,7 @@ your machine, then `mix deps.get && mix test`. There is **no virtualenv step** �
 Mix always keeps dependencies in a per-project `deps/` and compiles to a
 per-project `_build/`, so projects are isolated automatically.
 
-The toolchain is pinned in [`.tool-versions`](../.tool-versions):
+The toolchain is pinned in [`.tool-versions`](https://github.com/goguava-ai/elixir-sdk/blob/main/.tool-versions):
 
 ```
 erlang 27.3.4.13
@@ -85,6 +85,6 @@ live in named volumes, so it never writes into — or clobbers — your native b
 
 ## Examples
 
-Runnable examples live in [`examples/`](../examples). See
-[`examples/help_desk.exs`](../examples/help_desk.exs) for a self-contained agent
+Runnable examples live in [`examples/`](https://github.com/goguava-ai/elixir-sdk/tree/main/examples). See
+[`examples/help_desk.exs`](https://github.com/goguava-ai/elixir-sdk/blob/main/examples/help_desk.exs) for a self-contained agent
 built on the same toolchain.
