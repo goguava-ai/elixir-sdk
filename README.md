@@ -1,5 +1,7 @@
 # Guava (Elixir)
 
+[![Hex.pm](https://img.shields.io/hexpm/v/guava.svg)](https://hex.pm/packages/guava)
+[![Hexdocs](https://img.shields.io/badge/hex-docs-8e7ce6.svg)](https://hexdocs.pm/guava)
 [![Guava Python SDK](https://img.shields.io/badge/Guava%20Python%20SDK-v0.34.0-6C4AB6)](PARITY.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/goguava-ai/elixir-sdk/blob/main/LICENSE)
 [![Elixir](https://img.shields.io/badge/Elixir-~%3E%201.15-663399)](https://github.com/goguava-ai/elixir-sdk/blob/main/.tool-versions)
