@@ -59,7 +59,7 @@ defmodule Guava.MixProject do
         "GitHub" => @source_url,
         "Guava Python SDK" => "https://github.com/goguava-ai/python-sdk"
       },
-      maintainers: []
+      maintainers: ["Griffin Holt"]
     ]
   end
 
