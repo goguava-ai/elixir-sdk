@@ -6,7 +6,7 @@
 # Or test it locally with an LLM-roleplayed caller (no phone needed):
 #   GUAVA_API_KEY=gva-... elixir examples/help_desk.exs --roleplay
 
-Mix.install([{:guava, "~> 0.32"}])
+Mix.install([{:guava, "~> 0.34"}])
 
 alias Guava.{Agent, Call, Client, IntentRecognizer}
 

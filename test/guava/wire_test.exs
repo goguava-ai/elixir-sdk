@@ -141,7 +141,7 @@ defmodule Guava.WireTest do
       assert %Events.AgentSpeech{interrupted: false} =
                Events.decode(dump("events", "agent_speech_min"))
 
-      assert %Events.BotSessionEnded{termination_reason: "user-hangup"} =
+      assert %Events.BotSessionEnded{termination_reason: "user-hangup", dnc: false} =
                Events.decode(dump("events", "bot_session_ended"))
 
       assert %Events.DTMFPressed{digit: "5"} = Events.decode(dump("events", "dtmf"))
@@ -154,6 +154,15 @@ defmodule Guava.WireTest do
                Events.decode(dump("events", "action_item_done"))
 
       assert %Events.CallerSpeech{sequence: 3} = Events.decode(dump("events", "with_sequence"))
+    end
+
+    test "bot-session-ended decodes dnc: true" do
+      assert %Events.BotSessionEnded{dnc: true} =
+               Events.decode(%{
+                 "event_type" => "bot-session-ended",
+                 "termination_reason" => "user-hangup",
+                 "dnc" => true
+               })
     end
 
     test "unknown event type decodes to nil" do

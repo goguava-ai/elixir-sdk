@@ -1,7 +1,7 @@
 # Parity with the Python SDK
 
 Ground truth is the Python [`guava-sdk`](https://github.com/goguava-ai/python-sdk)
-(v0.32.0). This Elixir port keeps the same
+(v0.34.0). This Elixir port keeps the same
 concepts and wire protocol but adapts the **public API to idiomatic Elixir**
 (there are no users, so this was a deliberate design choice, not a constraint).
 

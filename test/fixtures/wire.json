@@ -325,11 +325,12 @@
     },
     "bot_session_ended": {
       "dump": {
+        "dnc": false,
         "event_type": "bot-session-ended",
         "sequence": null,
         "termination_reason": "user-hangup"
       },
-      "json": "{\"sequence\":null,\"event_type\":\"bot-session-ended\",\"termination_reason\":\"user-hangup\"}"
+      "json": "{\"sequence\":null,\"event_type\":\"bot-session-ended\",\"termination_reason\":\"user-hangup\",\"dnc\":false}"
     },
     "caller_speech": {
       "dump": {

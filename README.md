@@ -1,14 +1,14 @@
 # Guava (Elixir)
 
-[![Guava Python SDK](https://img.shields.io/badge/Guava%20Python%20SDK-v0.32.0-6C4AB6)](PARITY.md)
+[![Guava Python SDK](https://img.shields.io/badge/Guava%20Python%20SDK-v0.34.0-6C4AB6)](PARITY.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Elixir](https://img.shields.io/badge/Elixir-~%3E%201.15-663399)](.tool-versions)
 
 The Elixir SDK for the [Guava](https://goguava.ai) voice-agent platform.
 
 **Tracks the [Guava Python SDK](https://github.com/goguava-ai/python-sdk)
-`v0.32.0`.** The Elixir package version mirrors the Python version it tracks, so
-`~> 0.32` here corresponds to Python `0.32.x`.
+`v0.34.0`.** The Elixir package version mirrors the Python version it tracks, so
+`~> 0.34` here corresponds to Python `0.34.x`.
 
 > Community-maintained and actively developed. Support is best-effort — issues
 > and pull requests are welcome. The public API is adapted to idiomatic Elixir;
@@ -18,7 +18,7 @@ The Elixir SDK for the [Guava](https://goguava.ai) voice-agent platform.
 
 ```elixir
 def deps do
-  [{:guava, "~> 0.32"}]
+  [{:guava, "~> 0.34"}]
 end
 ```
 

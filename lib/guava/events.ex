@@ -148,12 +148,13 @@ end
 
 defmodule Guava.Events.BotSessionEnded do
   @moduledoc "The bot session ended."
-  defstruct sequence: nil, event_type: "bot-session-ended", termination_reason: nil
+  defstruct sequence: nil, event_type: "bot-session-ended", termination_reason: nil, dnc: false
 
   @type t :: %__MODULE__{
           sequence: integer() | nil,
           event_type: String.t(),
-          termination_reason: String.t()
+          termination_reason: String.t(),
+          dnc: boolean()
         }
 end
 
@@ -302,7 +303,11 @@ defmodule Guava.Events do
         }
 
       "bot-session-ended" ->
-        %Events.BotSessionEnded{sequence: seq, termination_reason: m["termination_reason"]}
+        %Events.BotSessionEnded{
+          sequence: seq,
+          termination_reason: m["termination_reason"],
+          dnc: m["dnc"] || false
+        }
 
       "choice-query" ->
         %Events.ChoiceQuery{

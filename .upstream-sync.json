@@ -1,5 +1,5 @@
 {
-  "python_sdk_version": "0.32.0",
-  "synced_at": "2026-07-06",
+  "python_sdk_version": "0.34.0",
+  "synced_at": "2026-07-14",
   "notes": "The Python guava-sdk (PyPI: guava-sdk) version this Elixir port is known to match. Bump this after reconciling upstream changes; the check-upstream-parity skill diffs from here. See PARITY.md."
 }
