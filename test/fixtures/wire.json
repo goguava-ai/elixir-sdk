@@ -96,23 +96,16 @@
       },
       "json": "{\"command_type\":\"read-script\",\"script\":\"Hello\"}"
     },
-    "reconnect_outbound": {
-      "dump": {
-        "command_type": "reconnect-outbound",
-        "highest_seen_sequence": 7,
-        "session_id": "sess_1"
-      },
-      "json": "{\"command_type\":\"reconnect-outbound\",\"session_id\":\"sess_1\",\"highest_seen_sequence\":7}"
-    },
     "registered_hooks": {
       "dump": {
+        "accept_dtmf_for_numbers": true,
         "command_type": "registered-hooks",
         "has_on_action_requested": true,
         "has_on_escalate": false,
         "has_on_intent": false,
         "has_on_question": true
       },
-      "json": "{\"command_type\":\"registered-hooks\",\"has_on_question\":true,\"has_on_intent\":false,\"has_on_action_requested\":true,\"has_on_escalate\":false}"
+      "json": "{\"command_type\":\"registered-hooks\",\"has_on_question\":true,\"has_on_intent\":false,\"has_on_action_requested\":true,\"has_on_escalate\":false,\"accept_dtmf_for_numbers\":true}"
     },
     "reject_inbound": {
       "dump": {
@@ -126,6 +119,17 @@
         "reason": "bad"
       },
       "json": "{\"command_type\":\"retry-task\",\"reason\":\"bad\"}"
+    },
+    "send_agent_dtmf": {
+      "dump": {
+        "command_type": "send-agent-dtmf",
+        "digits": [
+          "1",
+          "2",
+          "3"
+        ]
+      },
+      "json": "{\"command_type\":\"send-agent-dtmf\",\"digits\":[\"1\",\"2\",\"3\"]}"
     },
     "send_caller_text": {
       "dump": {
@@ -197,7 +201,8 @@
             "item_type": "field",
             "key": "name",
             "question": "",
-            "required": true
+            "required": true,
+            "sensitive": false
           },
           {
             "item_type": "say",
@@ -215,7 +220,7 @@
         "objective": "Collect info",
         "task_id": "abc123"
       },
-      "json": "{\"command_type\":\"set-task\",\"task_id\":\"abc123\",\"objective\":\"Collect info\",\"completion_criteria\":\"done\",\"action_items\":[{\"item_type\":\"field\",\"key\":\"name\",\"description\":\"their name\",\"question\":\"\",\"field_type\":\"text\",\"required\":true,\"choices\":[],\"is_search_field\":false},{\"item_type\":\"say\",\"statement\":\"Hi there\",\"key\":\"g1\"},{\"item_type\":\"todo\",\"key\":\"t1\",\"description\":\"Verify identity\"}]}"
+      "json": "{\"command_type\":\"set-task\",\"task_id\":\"abc123\",\"objective\":\"Collect info\",\"completion_criteria\":\"done\",\"action_items\":[{\"item_type\":\"field\",\"key\":\"name\",\"description\":\"their name\",\"question\":\"\",\"field_type\":\"text\",\"required\":true,\"choices\":[],\"is_search_field\":false,\"sensitive\":false},{\"item_type\":\"say\",\"statement\":\"Hi there\",\"key\":\"g1\"},{\"item_type\":\"todo\",\"key\":\"t1\",\"description\":\"Verify identity\"}]}"
     },
     "set_task_min": {
       "dump": {
@@ -364,9 +369,19 @@
       "dump": {
         "digit": "5",
         "event_type": "dtmf",
+        "recent_digits": "",
         "sequence": null
       },
-      "json": "{\"sequence\":null,\"event_type\":\"dtmf\",\"digit\":\"5\"}"
+      "json": "{\"sequence\":null,\"event_type\":\"dtmf\",\"digit\":\"5\",\"recent_digits\":\"\"}"
+    },
+    "dtmf_recent": {
+      "dump": {
+        "digit": "5",
+        "event_type": "dtmf",
+        "recent_digits": "123",
+        "sequence": null
+      },
+      "json": "{\"sequence\":null,\"event_type\":\"dtmf\",\"digit\":\"5\",\"recent_digits\":\"123\"}"
     },
     "error": {
       "dump": {
@@ -442,13 +457,6 @@
         "sequence": null
       },
       "json": "{\"sequence\":null,\"event_type\":\"outbound-call-failed\",\"error_code\":486,\"error_reason\":\"busy\"}"
-    },
-    "socket_health": {
-      "dump": {
-        "event_type": "socket-health",
-        "sequence": null
-      },
-      "json": "{\"sequence\":null,\"event_type\":\"socket-health\"}"
     },
     "task_done": {
       "dump": {
@@ -715,9 +723,10 @@
         "key": "k",
         "question": "",
         "required": true,
-        "searchable": false
+        "searchable": false,
+        "sensitive": false
       },
-      "json": "{\"item_type\":\"field\",\"key\":\"k\",\"description\":\"\",\"question\":\"\",\"field_type\":\"text\",\"required\":true,\"choices\":[],\"choice_generator\":null,\"searchable\":false}"
+      "json": "{\"item_type\":\"field\",\"key\":\"k\",\"description\":\"\",\"question\":\"\",\"field_type\":\"text\",\"required\":true,\"choices\":[],\"choice_generator\":null,\"searchable\":false,\"sensitive\":false}"
     },
     "field_full": {
       "dump": {
@@ -732,9 +741,10 @@
         "key": "k",
         "question": "q",
         "required": false,
-        "searchable": false
+        "searchable": false,
+        "sensitive": false
       },
-      "json": "{\"item_type\":\"field\",\"key\":\"k\",\"description\":\"d\",\"question\":\"q\",\"field_type\":\"multiple_choice\",\"required\":false,\"choices\":[\"a\",\"b\"],\"choice_generator\":null,\"searchable\":false}"
+      "json": "{\"item_type\":\"field\",\"key\":\"k\",\"description\":\"d\",\"question\":\"q\",\"field_type\":\"multiple_choice\",\"required\":false,\"choices\":[\"a\",\"b\"],\"choice_generator\":null,\"searchable\":false,\"sensitive\":false}"
     },
     "pstn": {
       "dump": {
@@ -762,9 +772,24 @@
         "item_type": "field",
         "key": "k",
         "question": "",
-        "required": true
+        "required": true,
+        "sensitive": false
       },
-      "json": "{\"item_type\":\"field\",\"key\":\"k\",\"description\":\"\",\"question\":\"\",\"field_type\":\"text\",\"required\":true,\"choices\":[],\"is_search_field\":true}"
+      "json": "{\"item_type\":\"field\",\"key\":\"k\",\"description\":\"\",\"question\":\"\",\"field_type\":\"text\",\"required\":true,\"choices\":[],\"is_search_field\":true,\"sensitive\":false}"
+    },
+    "serializable_field_sensitive": {
+      "dump": {
+        "choices": [],
+        "description": "",
+        "field_type": "cvv",
+        "is_search_field": false,
+        "item_type": "field",
+        "key": "cvv",
+        "question": "",
+        "required": true,
+        "sensitive": true
+      },
+      "json": "{\"item_type\":\"field\",\"key\":\"cvv\",\"description\":\"\",\"question\":\"\",\"field_type\":\"cvv\",\"required\":true,\"choices\":[],\"is_search_field\":false,\"sensitive\":true}"
     },
     "sip": {
       "dump": {

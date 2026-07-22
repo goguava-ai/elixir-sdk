@@ -16,6 +16,7 @@ defmodule Guava.Call do
     SetPersona,
     SetLanguageMode,
     SetAgentDTMF,
+    SendAgentDTMF,
     SendInstruction,
     Transfer,
     RetryTask,
@@ -106,9 +107,32 @@ defmodule Guava.Call do
   def set_language_mode(call, primary \\ "english", secondary \\ []),
     do: send_command(call, %SetLanguageMode{primary: primary, secondary: secondary})
 
-  @doc "Enable or disable the agent pressing DTMF digits."
+  @doc "Enable or disable the agent pressing DTMF digits. Not supported on WebRTC calls."
   @spec set_agent_dtmf(t(), boolean()) :: :ok
-  def set_agent_dtmf(call, enabled), do: send_command(call, %SetAgentDTMF{enabled: enabled})
+  def set_agent_dtmf(call, enabled) do
+    ensure_dtmf_supported!(call)
+    send_command(call, %SetAgentDTMF{enabled: enabled})
+  end
+
+  @doc """
+  Press a sequence of DTMF digits on the call (e.g. to navigate an IVR).
+
+  `digits` may be a string like `"123"` or a list of single-digit strings. Each
+  digit must be a valid DTMF digit (see `Guava.Types.dtmf_digits/0`). Not supported
+  on WebRTC calls.
+  """
+  @spec send_dtmf(t(), String.t() | [String.t()]) :: :ok
+  def send_dtmf(call, digits) do
+    ensure_dtmf_supported!(call)
+    digit_list = if is_binary(digits), do: String.graphemes(digits), else: digits
+
+    unless Enum.all?(digit_list, &(&1 in Guava.Types.dtmf_digits())) do
+      raise ArgumentError,
+            "Please input valid DTMF digits. Valid digits are: #{inspect(Guava.Types.dtmf_digits())}."
+    end
+
+    send_command(call, %SendAgentDTMF{digits: digit_list})
+  end
 
   @doc """
   Set the agent's persona.
@@ -189,6 +213,10 @@ defmodule Guava.Call do
       raise ArgumentError, "At least one of :objective or :checklist must be provided."
     end
 
+    # Record which field keys belong to this task so their validators can run when
+    # the task completes (see Guava.Call.Runtime).
+    :ets.insert(call.table, {{:task_fields, task_id}, field_keys(checklist)})
+
     send_command(call, %SetTask{
       task_id: task_id,
       objective: objective,
@@ -196,6 +224,18 @@ defmodule Guava.Call do
       action_items: Enum.map(checklist, &to_action_item/1)
     })
   end
+
+  defp field_keys(checklist) do
+    for item <- checklist,
+        match?(%Field{}, item) or match?(%SerializableField{}, item),
+        do: item.key
+  end
+
+  defp ensure_dtmf_supported!(%__MODULE__{call_info: %{call_type: "webrtc"}}) do
+    raise ArgumentError, "WebRTC calls do not support sending DTMF."
+  end
+
+  defp ensure_dtmf_supported!(_call), do: :ok
 
   defp to_action_item(item) when is_binary(item), do: Todo.new(item)
   defp to_action_item(%Field{} = f), do: SerializableField.from_field(f)

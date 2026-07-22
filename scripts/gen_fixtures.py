@@ -26,7 +26,6 @@ def dump(model):
 cmds = {
     "start_outbound": C.StartOutboundCallCommand(from_number="+14155550100", to_number="+14155550111"),
     "start_outbound_no_from": C.StartOutboundCallCommand(from_number=None, to_number="+14155550111"),
-    "reconnect_outbound": C.ReconnectOutboundSessionCommand(session_id="sess_1", highest_seen_sequence=7),
     "listen_inbound": C.ListenInboundCommand(agent_number="+14155550100"),
     "reject_inbound": C.RejectInboundCallCommand(),
     "accept_inbound": C.AcceptInboundCallCommand(),
@@ -62,6 +61,7 @@ cmds = {
     "send_caller_text": C.SendCallerTextCommand(text="hi"),
     "expert_error": C.ExpertErrorCommand(message="boom"),
     "set_agent_dtmf": C.SetAgentDTMFCommand(enabled=True),
+    "send_agent_dtmf": C.SendAgentDTMFCommand(digits=["1", "2", "3"]),
 }
 for k, v in cmds.items():
     out["commands"][k] = dump(v)
@@ -70,7 +70,6 @@ for k, v in cmds.items():
 evts = {
     "inbound_call": E.InboundCallEvent(caller_number="+14155550100", agent_number="+14155550111"),
     "inbound_call_empty": E.InboundCallEvent(),
-    "socket_health": E.SocketHealthEvent(),
     "caller_speech": E.CallerSpeechEvent(utterance="hello", utterance_id="u1"),
     "caller_speech_min": E.CallerSpeechEvent(utterance="hello"),
     "agent_speech": E.AgentSpeechEvent(utterance="hi", interrupted=True),
@@ -90,6 +89,7 @@ evts = {
     "escalate": E.EscalateEvent(requested_by="agent"),
     "escalate_default": E.EscalateEvent(),
     "dtmf": E.DTMFPressedEvent(digit="5"),
+    "dtmf_recent": E.DTMFPressedEvent(digit="5", recent_digits="123"),
     "with_sequence": E.CallerSpeechEvent(utterance="x", sequence=3),
 }
 for k, v in evts.items():
@@ -144,6 +144,7 @@ types = {
     "field_full": Field(key="k", description="d", question="q", field_type="multiple_choice", required=False, choices=["a", "b"]),
     "field_default": Field(key="k"),
     "serializable_field": SerializableField(key="k", is_search_field=True),
+    "serializable_field_sensitive": SerializableField(key="cvv", field_type="cvv", sensitive=True),
     "say": Say(statement="hello", key="s1"),
     "todo": Todo(description="do it", key="t1"),
     "pstn": PSTNCallInfo(from_number="+14155550100", to_number="+14155550111", caller_id="Bob"),

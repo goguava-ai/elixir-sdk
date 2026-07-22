@@ -113,7 +113,8 @@ defmodule Guava.Call.Runtime do
       has_on_question: state.hooks.has_on_question,
       has_on_intent: false,
       has_on_action_requested: state.hooks.has_on_action_requested,
-      has_on_escalate: state.hooks.has_on_escalate
+      has_on_escalate: state.hooks.has_on_escalate,
+      accept_dtmf_for_numbers: state.hooks.accept_dtmf
     })
 
     Enum.each(initial_variables, fn {k, v} ->
@@ -228,17 +229,26 @@ defmodule Guava.Call.Runtime do
   end
 
   defp process_event(%Events.TaskCompleted{task_id: task_id}, %State{module: m, call: c} = s) do
-    Logger.info("Task #{task_id} completed.")
+    {s, errors} = run_validations(s, task_id)
 
-    us =
-      safe_noreply(s, fn -> m.handle_task_complete(task_id, c, s.user_state) end, fn ->
-        %ExpertError{
-          message:
-            "The expert encountered an error while processing on_task_complete('#{task_id}')."
-        }
-      end)
+    case errors do
+      [] ->
+        Logger.info("Task #{task_id} completed.")
 
-    {:noreply, %{s | user_state: us}}
+        us =
+          safe_noreply(s, fn -> m.handle_task_complete(task_id, c, s.user_state) end, fn ->
+            %ExpertError{
+              message:
+                "The expert encountered an error while processing on_task_complete('#{task_id}')."
+            }
+          end)
+
+        {:noreply, %{s | user_state: us}}
+
+      msgs ->
+        do_emit(s, %Commands.RetryTask{reason: Enum.join(msgs, " ")})
+        {:noreply, s}
+    end
   end
 
   defp process_event(
@@ -321,6 +331,36 @@ defmodule Guava.Call.Runtime do
   end
 
   # ---- callback interpreters ----
+
+  # Run each of the task's field validators (via handle_validate/4), threading the
+  # user state. Returns the updated state and any error messages, in order. Fields
+  # without a validator hit the injected default and pass.
+  defp run_validations(%State{module: m, call: c} = s, task_id) do
+    field_keys =
+      case :ets.lookup(s.ets, {:task_fields, task_id}) do
+        [{_, keys}] -> keys
+        [] -> []
+      end
+
+    {user_state, errors} =
+      Enum.reduce(field_keys, {s.user_state, []}, fn key, {us, errs} ->
+        {us, result} =
+          safe_reply(
+            %{s | user_state: us},
+            fn ->
+              m.handle_validate(key, c, Call.get_field(c, key), us)
+            end,
+            :ok
+          )
+
+        case result do
+          {:error, msg} -> {us, [msg | errs]}
+          _ok -> {us, errs}
+        end
+      end)
+
+    {%{s | user_state: user_state}, Enum.reverse(errors)}
+  end
 
   # Run a void callback, returning the new user state; on error, log, optionally
   # emit a command, and keep the previous state.

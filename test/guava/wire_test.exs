@@ -34,10 +34,6 @@ defmodule Guava.WireTest do
       "expert_error" => %Commands.ExpertError{message: "boom"},
       "listen_inbound" => %Commands.ListenInbound{agent_number: "+14155550100"},
       "read_script" => %Commands.ReadScript{script: "Hello"},
-      "reconnect_outbound" => %Commands.ReconnectOutboundSession{
-        session_id: "sess_1",
-        highest_seen_sequence: 7
-      },
       "registered_hooks" => %Commands.RegisteredHooks{
         has_on_question: true,
         has_on_intent: false,
@@ -49,6 +45,7 @@ defmodule Guava.WireTest do
       "send_caller_text" => %Commands.SendCallerText{text: "hi"},
       "send_instruction" => %Commands.SendInstruction{instruction: "Do the thing"},
       "set_agent_dtmf" => %Commands.SetAgentDTMF{enabled: true},
+      "send_agent_dtmf" => %Commands.SendAgentDTMF{digits: ["1", "2", "3"]},
       "set_language_mode" => %Commands.SetLanguageMode{primary: "english", secondary: ["spanish"]},
       "set_language_mode_default" => %Commands.SetLanguageMode{},
       "set_persona" => %Commands.SetPersona{
@@ -99,6 +96,11 @@ defmodule Guava.WireTest do
       "accept" => %IncomingCallAction.Accept{},
       "decline" => %IncomingCallAction.Decline{},
       "serializable_field" => %SerializableField{key: "k", is_search_field: true},
+      "serializable_field_sensitive" => %SerializableField{
+        key: "cvv",
+        field_type: "cvv",
+        sensitive: true
+      },
       "say" => %Say{statement: "hello", key: "s1"},
       "todo" => %Todo{description: "do it", key: "t1"},
       "pstn" => %CallInfo.PSTN{
@@ -144,7 +146,12 @@ defmodule Guava.WireTest do
       assert %Events.BotSessionEnded{termination_reason: "user-hangup", dnc: false} =
                Events.decode(dump("events", "bot_session_ended"))
 
-      assert %Events.DTMFPressed{digit: "5"} = Events.decode(dump("events", "dtmf"))
+      assert %Events.DTMFPressed{digit: "5", recent_digits: ""} =
+               Events.decode(dump("events", "dtmf"))
+
+      assert %Events.DTMFPressed{digit: "5", recent_digits: "123"} =
+               Events.decode(dump("events", "dtmf_recent"))
+
       assert %Events.Escalate{requested_by: "agent"} = Events.decode(dump("events", "escalate"))
 
       assert %Events.Escalate{requested_by: "human"} =
@@ -163,6 +170,11 @@ defmodule Guava.WireTest do
                  "termination_reason" => "user-hangup",
                  "dnc" => true
                })
+    end
+
+    test "dtmf without recent_digits defaults to empty" do
+      assert %Events.DTMFPressed{digit: "7", recent_digits: ""} =
+               Events.decode(%{"event_type" => "dtmf", "digit" => "7"})
     end
 
     test "unknown event type decodes to nil" do
@@ -213,6 +225,13 @@ defmodule Guava.WireTest do
     test "valid multiple_choice field" do
       assert %Field{choices: ["a", "b"]} =
                Field.new(key: "k", field_type: "multiple_choice", choices: ["a", "b"])
+    end
+
+    test "digit_sequence and cvv are valid field types" do
+      assert %Field{field_type: "cvv"} = Field.new(key: "k", field_type: "cvv")
+
+      assert %Field{field_type: "digit_sequence"} =
+               Field.new(key: "k", field_type: "digit_sequence")
     end
   end
 end

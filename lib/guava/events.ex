@@ -21,12 +21,6 @@ defmodule Guava.Events.InboundCall do
         }
 end
 
-defmodule Guava.Events.SocketHealth do
-  @moduledoc "A socket health heartbeat."
-  defstruct sequence: nil, event_type: "socket-health"
-  @type t :: %__MODULE__{sequence: integer() | nil, event_type: String.t()}
-end
-
 defmodule Guava.Events.CallerSpeech do
   @moduledoc "The caller said something. Utterances sharing an id supersede earlier ones."
   defstruct sequence: nil, event_type: "caller-speech", utterance: nil, utterance_id: nil
@@ -184,8 +178,14 @@ end
 
 defmodule Guava.Events.DTMFPressed do
   @moduledoc "A DTMF keypad digit was pressed."
-  defstruct sequence: nil, event_type: "dtmf", digit: nil
-  @type t :: %__MODULE__{sequence: integer() | nil, event_type: String.t(), digit: String.t()}
+  defstruct sequence: nil, event_type: "dtmf", digit: nil, recent_digits: ""
+
+  @type t :: %__MODULE__{
+          sequence: integer() | nil,
+          event_type: String.t(),
+          digit: String.t(),
+          recent_digits: String.t()
+        }
 end
 
 defmodule Guava.Events do
@@ -202,7 +202,6 @@ defmodule Guava.Events do
   @typedoc "Any event that can be received from the Guava server."
   @type t ::
           Events.InboundCall.t()
-          | Events.SocketHealth.t()
           | Events.CallerSpeech.t()
           | Events.AgentSpeech.t()
           | Events.Error.t()
@@ -238,9 +237,6 @@ defmodule Guava.Events do
           caller_number: m["caller_number"],
           agent_number: m["agent_number"]
         }
-
-      "socket-health" ->
-        %Events.SocketHealth{sequence: seq}
 
       "caller-speech" ->
         %Events.CallerSpeech{
@@ -321,7 +317,11 @@ defmodule Guava.Events do
         %Events.Escalate{sequence: seq, requested_by: m["requested_by"] || "human"}
 
       "dtmf" ->
-        %Events.DTMFPressed{sequence: seq, digit: m["digit"]}
+        %Events.DTMFPressed{
+          sequence: seq,
+          digit: m["digit"],
+          recent_digits: m["recent_digits"] || ""
+        }
 
       "session-started" ->
         %Events.OutboundSessionStarted{sequence: seq, session_id: m["session_id"]}

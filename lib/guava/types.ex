@@ -29,7 +29,7 @@ defmodule Guava.Types do
 
   @languages ~w(english spanish french german italian)
 
-  @field_types ~w(text date datetime integer multiple_choice calendar_slot)
+  @field_types ~w(text date integer multiple_choice calendar_slot digit_sequence cvv)
 
   @outreach_modalities ~w(sms)
 

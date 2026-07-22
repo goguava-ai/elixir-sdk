@@ -45,6 +45,10 @@ defmodule Guava.Agent do
     * `handle_action(action_key, call, state)` — one callback; pattern-match the key
     * `handle_task_complete(task_id, call, state)` — one callback; pattern-match the id
       (a `reach_person/3` task completes as `handle_task_complete("reach_person", …)`)
+    * `handle_validate(field_key, call, value, state)` → `{:reply, :ok | {:error, reason}, state}`
+      — validates a collected field on task completion; any `{:error, reason}` retries
+      the task instead of completing it. Pattern-match the key; include a catch-all
+      `handle_validate(_, _, _, state)` returning `{:reply, :ok, state}`.
     * `handle_search_query(field_key, call, query, state)` → `{:reply, {matched, other}, state}`
     * `handle_dtmf(call, event, state)` / `handle_escalate(call, state)`
     * `handle_outbound_failed(call, event, state)` / `handle_session_end(call, event, state)`
@@ -69,6 +73,8 @@ defmodule Guava.Agent do
               {:reply, Guava.SuggestedAction.t() | [Guava.SuggestedAction.t()] | nil, state()}
   @callback handle_action(String.t(), call(), state()) :: {:noreply, state()}
   @callback handle_task_complete(String.t(), call(), state()) :: {:noreply, state()}
+  @callback handle_validate(String.t(), call(), term(), state()) ::
+              {:reply, :ok | {:error, String.t()}, state()}
   @callback handle_search_query(String.t(), call(), String.t(), state()) ::
               {:reply, {[String.t()], [String.t()]}, state()}
   @callback handle_dtmf(call(), Guava.Events.DTMFPressed.t(), state()) :: {:noreply, state()}
@@ -90,6 +96,7 @@ defmodule Guava.Agent do
                       handle_action_request: 3,
                       handle_action: 3,
                       handle_task_complete: 3,
+                      handle_validate: 4,
                       handle_search_query: 4,
                       handle_dtmf: 3,
                       handle_escalate: 2,
@@ -110,6 +117,7 @@ defmodule Guava.Agent do
     handle_action_request: 3,
     handle_action: 3,
     handle_task_complete: 3,
+    handle_validate: 4,
     handle_search_query: 4,
     handle_dtmf: 3,
     handle_escalate: 2,
@@ -127,9 +135,12 @@ defmodule Guava.Agent do
       opts
       |> Keyword.take([:name, :organization, :purpose, :voice])
 
+    accept_dtmf = Keyword.get(opts, :accept_dtmf, true)
+
     quote do
       @behaviour Guava.Agent
       @guava_persona unquote(persona)
+      @guava_accept_dtmf unquote(accept_dtmf)
       @before_compile Guava.Agent
     end
   end
@@ -137,11 +148,15 @@ defmodule Guava.Agent do
   defmacro __before_compile__(env) do
     mod = env.module
 
+    accept_dtmf = Module.get_attribute(mod, :guava_accept_dtmf)
+    accept_dtmf = if is_nil(accept_dtmf), do: true, else: accept_dtmf
+
     hooks =
       Macro.escape(%{
         has_on_question: Module.defines?(mod, {:handle_question, 3}),
         has_on_action_requested: Module.defines?(mod, {:handle_action_request, 3}),
-        has_on_escalate: Module.defines?(mod, {:handle_escalate, 2})
+        has_on_escalate: Module.defines?(mod, {:handle_escalate, 2}),
+        accept_dtmf: accept_dtmf
       })
 
     persona = Module.get_attribute(mod, :guava_persona) || []
@@ -194,6 +209,9 @@ defmodule Guava.Agent do
 
   def __default__(:handle_task_complete, 3, _),
     do: quote(do: def(handle_task_complete(_task_id, _call, state), do: {:noreply, state}))
+
+  def __default__(:handle_validate, 4, _),
+    do: quote(do: def(handle_validate(_fk, _call, _value, state), do: {:reply, :ok, state}))
 
   def __default__(:handle_search_query, 4, _),
     do: quote(do: def(handle_search_query(_fk, _call, _q, state), do: {:reply, {[], []}, state}))

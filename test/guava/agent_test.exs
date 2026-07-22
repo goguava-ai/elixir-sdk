@@ -73,6 +73,89 @@ defmodule Guava.AgentTest do
     def handle_action_request(_c, _r, s), do: {:reply, nil, s}
   end
 
+  defmodule DtmfOffAgent do
+    use Guava.Agent, name: "D", accept_dtmf: false
+  end
+
+  defmodule MultiValidateAgent do
+    use Guava.Agent, name: "MV"
+
+    @impl true
+    def handle_start(call, state) do
+      Guava.Call.set_task(call, "collect2",
+        checklist: [
+          Guava.Field.new(key: "a", description: "a"),
+          Guava.Field.new(key: "b", description: "b")
+        ]
+      )
+
+      {:noreply, state}
+    end
+
+    @impl true
+    def handle_validate("a", _call, _value, state), do: {:reply, {:error, "A invalid."}, state}
+    def handle_validate("b", _call, _value, state), do: {:reply, {:error, "B invalid."}, state}
+    def handle_validate(_key, _call, _value, state), do: {:reply, :ok, state}
+  end
+
+  defmodule ThreadValidateAgent do
+    use Guava.Agent, name: "TV"
+
+    @impl true
+    def init(_ci), do: {:ok, %{validated: []}}
+
+    @impl true
+    def handle_start(call, state) do
+      Guava.Call.set_task(call, "collect3",
+        checklist: [
+          Guava.Field.new(key: "x", description: "x"),
+          Guava.Field.new(key: "y", description: "y")
+        ]
+      )
+
+      {:noreply, state}
+    end
+
+    # Each validator appends its key, threading the accumulated state forward.
+    @impl true
+    def handle_validate(key, _call, _value, state),
+      do: {:reply, :ok, %{state | validated: state.validated ++ [key]}}
+
+    @impl true
+    def handle_task_complete("collect3", call, state) do
+      Guava.Call.send_instruction(call, "validated: #{Enum.join(state.validated, ",")}")
+      {:noreply, state}
+    end
+  end
+
+  defmodule ValidatingAgent do
+    use Guava.Agent, name: "V"
+
+    @impl true
+    def handle_start(call, state) do
+      Guava.Call.set_task(call, "collect",
+        checklist: [Guava.Field.new(key: "email", description: "their email")]
+      )
+
+      {:noreply, state}
+    end
+
+    @impl true
+    def handle_validate("email", _call, value, state) do
+      if is_binary(value) and String.contains?(value, "@"),
+        do: {:reply, :ok, state},
+        else: {:reply, {:error, "Please provide a valid email."}, state}
+    end
+
+    def handle_validate(_key, _call, _value, state), do: {:reply, :ok, state}
+
+    @impl true
+    def handle_task_complete("collect", call, state) do
+      Guava.Call.send_instruction(call, "task validated")
+      {:noreply, state}
+    end
+  end
+
   # ── helpers ─────────────────────────────────────────────────────────────────
 
   setup do
@@ -206,13 +289,60 @@ defmodule Guava.AgentTest do
     assert HooksAgent.__guava_hooks__() == %{
              has_on_question: true,
              has_on_action_requested: true,
-             has_on_escalate: false
+             has_on_escalate: false,
+             accept_dtmf: true
            }
 
     assert PersonaOnly.__guava_hooks__() == %{
              has_on_question: false,
              has_on_action_requested: false,
-             has_on_escalate: false
+             has_on_escalate: false,
+             accept_dtmf: true
            }
+  end
+
+  test "accept_dtmf option flows into __guava_hooks__ and the registered-hooks command" do
+    assert DtmfOffAgent.__guava_hooks__().accept_dtmf == false
+
+    start_runtime(DtmfOffAgent)
+    assert assert_command("registered-hooks")["accept_dtmf_for_numbers"] == false
+  end
+
+  test "handle_validate failure retries the task instead of completing it" do
+    pid = start_runtime(ValidatingAgent)
+
+    # Collect the field, then complete the task with an invalid value.
+    feed(pid, %{"event_type" => "action-item-done", "key" => "email", "payload" => "not-an-email"})
+
+    feed(pid, %{"event_type" => "task-done", "task_id" => "collect"})
+
+    assert assert_command("retry-task")["reason"] =~ "valid email"
+
+    refute_receive {:command,
+                    %{"command_type" => "send-instruction", "instruction" => "validated"}}
+  end
+
+  test "handle_validate success lets the task complete" do
+    pid = start_runtime(ValidatingAgent)
+
+    feed(pid, %{"event_type" => "action-item-done", "key" => "email", "payload" => "a@b.com"})
+    feed(pid, %{"event_type" => "task-done", "task_id" => "collect"})
+
+    refute_receive {:command, %{"command_type" => "retry-task"}}
+    assert assert_command("send-instruction")["instruction"] =~ "validated"
+  end
+
+  test "handle_validate joins multiple field errors in field order" do
+    pid = start_runtime(MultiValidateAgent)
+    feed(pid, %{"event_type" => "task-done", "task_id" => "collect2"})
+
+    assert assert_command("retry-task")["reason"] == "A invalid. B invalid."
+  end
+
+  test "handle_validate threads state into handle_task_complete" do
+    pid = start_runtime(ThreadValidateAgent)
+    feed(pid, %{"event_type" => "task-done", "task_id" => "collect3"})
+
+    assert assert_command("send-instruction")["instruction"] == "validated: x,y"
   end
 end

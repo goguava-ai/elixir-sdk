@@ -1,7 +1,7 @@
 # Parity with the Python SDK
 
 Ground truth is the Python [`guava-sdk`](https://github.com/goguava-ai/python-sdk)
-(v0.34.0). This Elixir port keeps the same
+(v0.35.0). This Elixir port keeps the same
 concepts and wire protocol but adapts the **public API to idiomatic Elixir**
 (there are no users, so this was a deliberate design choice, not a constraint).
 
@@ -46,6 +46,13 @@ concepts and wire protocol but adapts the **public API to idiomatic Elixir**
   supersedes it (maintainers confirmed out of scope).
 - **`call_local` / curses `chat` omitted** — platform-specific local-dev tools.
   Use `Guava.Testing`.
+- **Edge / on-device wake features omitted** — `edge_wake.py`, `on_wakeword` /
+  `on_wake` / `on_press_enter`, `listen_for_wake`, and the bundled wakeword ONNX
+  models are gated behind `GUAVA_EDGE` and marked "unavailable for public use"
+  upstream. Same class as the local-dev tools above; no wire impact.
+- **Health-check server omitted** — the opt-in `GUAVA_HEALTH_SERVER` HTTP `/live`
+  endpoint has no wire impact; OTP supervision (`Guava.Channel`) already exposes
+  liveness.
 - **Local RAG vector-store backends** are expressed as the
   `Guava.RAG.VectorStore`/`GenerationModel` behaviours; server-mode RAG is fully
   ported.

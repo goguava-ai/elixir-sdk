@@ -4,16 +4,11 @@ defmodule Guava.CallTest do
   alias Guava.{Call, Field, Say}
   alias Guava.Test.CommandRecorder
 
-  defp new_call do
+  defp new_call(call_info \\ %Guava.CallInfo.PSTN{to_number: "+14155550111"}) do
     {:ok, rec} = CommandRecorder.start_link(self())
     table = :ets.new(:guava_call_test, [:set, :public])
 
-    %Call{
-      id: "c1",
-      call_info: %Guava.CallInfo.PSTN{to_number: "+14155550111"},
-      server: rec,
-      table: table
-    }
+    %Call{id: "c1", call_info: call_info, server: rec, table: table}
   end
 
   test "set_task converts a mixed checklist into action items" do
@@ -86,6 +81,57 @@ defmodule Guava.CallTest do
   test "set_variable rejects non-JSON values" do
     call = new_call()
     assert_raise ArgumentError, fn -> Call.set_variable(call, "bad", {:a, :tuple}) end
+  end
+
+  test "set_task records the task's field keys in ETS (fields only)" do
+    call = new_call()
+
+    Call.set_task(call, "collect",
+      checklist: [
+        Field.new(key: "name", description: "their name"),
+        Field.new(key: "email", description: "their email"),
+        "verify identity",
+        Say.new("One moment", "s1")
+      ]
+    )
+
+    assert [{{:task_fields, "collect"}, ["name", "email"]}] =
+             :ets.lookup(call.table, {:task_fields, "collect"})
+  end
+
+  test "a sensitive field carries sensitive: true onto the wire" do
+    call = new_call()
+
+    Call.set_task(call, "t",
+      checklist: [Field.new(key: "cvv", field_type: "cvv", sensitive: true)]
+    )
+
+    assert_receive {:command, %{"command_type" => "set-task", "action_items" => [item]}}, 1000
+    assert item["sensitive"] == true and item["field_type"] == "cvv"
+  end
+
+  test "send_dtmf validates digits and emits send-agent-dtmf" do
+    call = new_call()
+
+    Call.send_dtmf(call, "123")
+
+    assert_receive {:command,
+                    %{"command_type" => "send-agent-dtmf", "digits" => ["1", "2", "3"]}},
+                   1000
+
+    Call.send_dtmf(call, ["4", "#"])
+
+    assert_receive {:command, %{"command_type" => "send-agent-dtmf", "digits" => ["4", "#"]}},
+                   1000
+
+    assert_raise ArgumentError, fn -> Call.send_dtmf(call, "12x") end
+  end
+
+  test "DTMF is rejected on WebRTC calls" do
+    call = new_call(%Guava.CallInfo.WebRTC{webrtc_code: "w1"})
+
+    assert_raise ArgumentError, ~r/WebRTC/, fn -> Call.send_dtmf(call, "1") end
+    assert_raise ArgumentError, ~r/WebRTC/, fn -> Call.set_agent_dtmf(call, true) end
   end
 
   test "hangup and transfer emit the right commands" do

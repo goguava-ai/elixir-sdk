@@ -8,6 +8,9 @@ defmodule Guava.Field do
   Field types requiring options (`"multiple_choice"`, `"calendar_slot"`) must
   supply either `:choices` (a small static list) or set `:searchable` and
   register a handler via `c:Guava.Agent.handle_search_query/4`.
+
+  Set `:sensitive` to mark a field as holding sensitive data (e.g. a `"cvv"` or
+  `"digit_sequence"`) so the server redacts it from logs and transcripts.
   """
   require Logger
 
@@ -19,7 +22,8 @@ defmodule Guava.Field do
             field_type: "text",
             required: true,
             choices: [],
-            searchable: false
+            searchable: false,
+            sensitive: false
 
   @type t :: %__MODULE__{
           item_type: String.t(),
@@ -29,7 +33,8 @@ defmodule Guava.Field do
           field_type: String.t(),
           required: boolean(),
           choices: [String.t()],
-          searchable: boolean()
+          searchable: boolean(),
+          sensitive: boolean()
         }
 
   @iso_8601 ~r/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?/
@@ -101,7 +106,8 @@ defmodule Guava.SerializableField do
             field_type: "text",
             required: true,
             choices: [],
-            is_search_field: false
+            is_search_field: false,
+            sensitive: false
 
   @type t :: %__MODULE__{
           item_type: String.t(),
@@ -111,7 +117,8 @@ defmodule Guava.SerializableField do
           field_type: String.t(),
           required: boolean(),
           choices: [String.t()],
-          is_search_field: boolean()
+          is_search_field: boolean(),
+          sensitive: boolean()
         }
 
   @doc "Build a `Guava.SerializableField` from a validated `Guava.Field`."
@@ -124,7 +131,8 @@ defmodule Guava.SerializableField do
       field_type: f.field_type,
       required: f.required,
       choices: f.choices,
-      is_search_field: f.searchable
+      is_search_field: f.searchable,
+      sensitive: f.sensitive
     }
   end
 end

@@ -11,7 +11,6 @@ defmodule Guava.Commands do
   @typedoc "Any command that can be sent to the Guava server."
   @type t ::
           Commands.StartOutboundCall.t()
-          | Commands.ReconnectOutboundSession.t()
           | Commands.ListenInbound.t()
           | Commands.RejectInbound.t()
           | Commands.AcceptInbound.t()
@@ -30,6 +29,7 @@ defmodule Guava.Commands do
           | Commands.SendCallerText.t()
           | Commands.ExpertError.t()
           | Commands.SetAgentDTMF.t()
+          | Commands.SendAgentDTMF.t()
 
   @doc "Encode a command struct to a plain JSON-ready map."
   @spec to_map(t()) :: map()
@@ -45,18 +45,6 @@ defmodule Guava.Commands.StartOutboundCall do
           command_type: String.t(),
           from_number: String.t() | nil,
           to_number: String.t()
-        }
-end
-
-defmodule Guava.Commands.ReconnectOutboundSession do
-  @moduledoc "Reconnect to an in-progress outbound session."
-  @derive Jason.Encoder
-  defstruct command_type: "reconnect-outbound", session_id: nil, highest_seen_sequence: 0
-
-  @type t :: %__MODULE__{
-          command_type: String.t(),
-          session_id: String.t(),
-          highest_seen_sequence: integer()
         }
 end
 
@@ -203,14 +191,16 @@ defmodule Guava.Commands.RegisteredHooks do
             has_on_question: false,
             has_on_intent: false,
             has_on_action_requested: false,
-            has_on_escalate: false
+            has_on_escalate: false,
+            accept_dtmf_for_numbers: true
 
   @type t :: %__MODULE__{
           command_type: String.t(),
           has_on_question: boolean(),
           has_on_intent: boolean(),
           has_on_action_requested: boolean(),
-          has_on_escalate: boolean()
+          has_on_escalate: boolean(),
+          accept_dtmf_for_numbers: boolean()
         }
 end
 
@@ -288,4 +278,11 @@ defmodule Guava.Commands.SetAgentDTMF do
   @derive Jason.Encoder
   defstruct command_type: "set-agent-dtmf", enabled: false
   @type t :: %__MODULE__{command_type: String.t(), enabled: boolean()}
+end
+
+defmodule Guava.Commands.SendAgentDTMF do
+  @moduledoc "Press a sequence of DTMF digits non-agentically."
+  @derive Jason.Encoder
+  defstruct command_type: "send-agent-dtmf", digits: []
+  @type t :: %__MODULE__{command_type: String.t(), digits: [String.t()]}
 end

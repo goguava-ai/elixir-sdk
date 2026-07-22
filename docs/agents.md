@@ -12,7 +12,8 @@ defmodule MyAgent do
     name: "Nova",                       # what the agent calls itself
     organization: "Clearfield Home",    # who it represents
     purpose: "Answer questions and route callers.",
-    voice: "alloy"                      # optional
+    voice: "alloy",                     # optional
+    accept_dtmf: true                   # optional; let callers enter numbers via keypad (default true)
 end
 ```
 

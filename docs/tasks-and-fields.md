@@ -69,9 +69,11 @@ Guava.Field.new(
 | `"text"` | a string (default) |
 | `"integer"` | a whole number |
 | `"date"` | a calendar date |
-| `"datetime"` | *(not yet implemented — raises)* |
 | `"multiple_choice"` | one of a set of options |
 | `"calendar_slot"` | an appointment time (ISO-8601 `YYYY-MM-DDTHH:MM`) |
+| `"digit_sequence"` | a sequence of keypad digits (e.g. an account number) |
+| `"cvv"` | a card security code (pair with `:sensitive`) |
+| `"datetime"` | *(not yet implemented — raises)* |
 
 ### Options
 
@@ -84,6 +86,8 @@ Guava.Field.new(
 - `:searchable` — set `true` and register a handler with
   [`handle_search_query/4`](handlers.md#handle_search_query) to generate options
   dynamically for large or data-driven option sets.
+- `:sensitive` — set `true` to mark the value as sensitive (e.g. a `"cvv"` or
+  `"digit_sequence"`) so the server redacts it from logs and transcripts.
 
 ### Validation
 

@@ -17,6 +17,7 @@ what you need; the rest get sensible defaults. Each (except `init/1` and
 | `handle_action_request(call, request, state)` | `{:reply, suggestion, state}` | the caller requests an action |
 | `handle_action(action_key, call, state)` | `{:noreply, state}` | an action executes (pattern-match the key) |
 | `handle_task_complete(task_id, call, state)` | `{:noreply, state}` | a task finishes (pattern-match the id) |
+| `handle_validate(field_key, call, value, state)` | `{:reply, :ok \| {:error, reason}, state}` | validate a collected field on task completion |
 | `handle_search_query(field_key, call, query, state)` | `{:reply, {matched, other}, state}` | a searchable field needs options |
 | `handle_dtmf(call, event, state)` | `{:noreply, state}` | a keypad digit is pressed |
 | `handle_escalate(call, state)` | `{:noreply, state}` | an escalation is requested |
@@ -89,6 +90,25 @@ def handle_task_complete("reach_person", call, state) do
 
   {:noreply, state}
 end
+```
+
+## handle_validate
+
+Runs when a task completes, once per collected field, **before**
+`handle_task_complete`. Pattern-match the field key and return `{:reply, :ok,
+state}` to accept the value or `{:reply, {:error, reason}, state}` to reject it.
+If any field is rejected, Guava retries the task with the combined reasons instead
+of completing it. Include a catch-all clause so unvalidated fields pass:
+
+```elixir
+@impl true
+def handle_validate("email", _call, value, state) do
+  if String.match?(value, ~r/@/),
+    do: {:reply, :ok, state},
+    else: {:reply, {:error, "That email doesn't look right — please re-collect it."}, state}
+end
+
+def handle_validate(_key, _call, _value, state), do: {:reply, :ok, state}
 ```
 
 ## handle_search_query

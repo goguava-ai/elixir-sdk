@@ -5,7 +5,7 @@
 ```elixir
 # mix.exs
 def deps do
-  [{:guava, "~> 0.34"}]
+  [{:guava, "~> 0.35"}]
 end
 ```
 

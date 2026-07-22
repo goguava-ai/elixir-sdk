@@ -62,6 +62,18 @@ Call.set_language_mode(call, "spanish", ["english"])
 Call.set_agent_dtmf(call, true)   # allow the agent to press keypad digits
 ```
 
+## DTMF
+
+```elixir
+Call.set_agent_dtmf(call, true)   # let the agent press digits when it decides to
+Call.send_dtmf(call, "123")       # press a specific sequence now (string or list)
+Call.send_dtmf(call, ["4", "#"])
+```
+
+`send_dtmf/2` presses a sequence immediately — useful for navigating an IVR. Each
+digit must be a valid DTMF digit (`0`–`9`, `*`, `#`, `A`–`D`). Both functions
+raise `ArgumentError` on WebRTC calls, which do not support sending DTMF.
+
 ## Fields and variables
 
 Collected field values (from tasks) are readable at any time:
