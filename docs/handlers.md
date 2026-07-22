@@ -122,6 +122,25 @@ def handle_search_query("slot", _call, query, state) do
 end
 ```
 
+## handle_dtmf
+
+A keypad digit was pressed. The event carries `digit` (the digit just pressed)
+and `recent_digits` — the recently-pressed sequence buffered by the server, so
+you can read a multi-digit entry (account number, menu path) without
+accumulating it yourself in `state`.
+
+```elixir
+@impl true
+def handle_dtmf(call, event, state) do
+  # event.digit: the digit just pressed. event.recent_digits: the buffered sequence.
+  if String.length(event.recent_digits) >= 6 do
+    Guava.Call.set_variable(call, "account", event.recent_digits)
+  end
+
+  {:noreply, state}
+end
+```
+
 ## handle_escalate
 
 The caller (or agent) asked to escalate. Without this callback, the agent
