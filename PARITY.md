@@ -60,10 +60,20 @@ concepts and wire protocol but adapts the **public API to idiomatic Elixir**
 ## Keeping in sync with the Python SDK
 
 The Python version this port currently matches is recorded in
-[`.upstream-sync.json`](.upstream-sync.json). To see what has changed upstream
-since then, run the **`check-upstream-parity`** Claude skill (in
-`.claude/skills/`): it diffs the tracked version against the latest `guava-sdk`
-on PyPI (handling being several releases behind), empirically checks for
-wire-protocol drift by regenerating fixtures, and writes a prioritized,
-read-only report under `sync/`. It never edits the SDK — reconciling the changes
-is a deliberate follow-up. After reconciling, bump `.upstream-sync.json`.
+[`.upstream-sync.json`](.upstream-sync.json). Two Claude skills (in
+`.claude/skills/`) drive the update workflow:
+
+1. **Report** — run **`check-upstream-parity`**. It diffs the tracked version
+   against the latest `guava-sdk` on PyPI (handling being several releases
+   behind), empirically checks for wire-protocol drift by regenerating fixtures,
+   and writes a prioritized, read-only report under `sync/`. It never edits the
+   SDK.
+2. **Reconcile** — make the actual `lib/`/`test/` changes, guided by the report
+   and the mapping above (manually or interactively with an agent). This is the
+   deliberate, human-in-the-loop step: decide what applies, adapt it to idiomatic
+   Elixir, and add tests.
+3. **Release** — run **`release`**. It bumps the version everywhere, regenerates
+   fixtures, runs a blocking verification gate (compile/test/docs/`hex.build`),
+   commits, tags, and cuts the GitHub release — then hands off the Hex publish
+   (`mix hex.publish` is run by a human because it needs an interactive 2FA OTP).
+   This step is what bumps `.upstream-sync.json`.

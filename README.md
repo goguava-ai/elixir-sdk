@@ -159,4 +159,18 @@ so it won't touch your native build:
 ./emix credo --strict
 ```
 
+### Keeping in sync with the Python SDK
+
+This port tracks the Python `guava-sdk` (see [`PARITY.md`](PARITY.md)). Two Claude
+skills in `.claude/skills/` drive updates:
+
+1. **`check-upstream-parity`** — diffs the tracked version against the latest PyPI
+   release and writes a prioritized, read-only drift report under `sync/`.
+2. **Reconcile** the changes in `lib/`/`test/` (manually or with an agent), guided
+   by the report and `PARITY.md` — the human-in-the-loop step.
+3. **`release`** — bumps the version, runs the verification gate, tags, and cuts
+   the GitHub release, then hands off the interactive, OTP-gated `mix hex.publish`.
+
+See [`PARITY.md`](PARITY.md#keeping-in-sync-with-the-python-sdk) for the full runbook.
+
 See [`PARITY.md`](PARITY.md) for parity status and intentional deviations.
