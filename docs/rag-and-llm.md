@@ -7,7 +7,7 @@ API keys required. They pair naturally with the handlers in
 ## DocumentQA (server mode)
 
 Index documents on the Guava server and answer questions over them. Ideal for
-[`on_question`](handlers.md#handle_question).
+[`handle_question`](handlers.md#handle_question).
 
 ```elixir
 client = Guava.Client.new()
@@ -69,7 +69,7 @@ Returns a list ordered by likelihood (multiple entries when ambiguous), or
 ## DatetimeFilter
 
 Filter ISO-8601 datetime slots by a natural-language query — pairs with a
-searchable `calendar_slot` field via [`on_search_query`](handlers.md#handle_search_query).
+searchable `calendar_slot` field via [`handle_search_query`](handlers.md#handle_search_query).
 
 ```elixir
 filter = Guava.DatetimeFilter.new(client, ["2026-07-03T10:00", "2026-07-03T14:00", "2026-07-04T09:00"])

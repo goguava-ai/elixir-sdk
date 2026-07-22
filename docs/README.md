@@ -12,7 +12,7 @@ on HexDocs once published, or via `mix docs`).
 3. [Agents](agents.md) — building an `Guava.Agent`, registering handlers, attaching channels.
 4. [Calls](calls.md) — the `Guava.Call` handle: steering a live call.
 5. [Tasks & Fields](tasks-and-fields.md) — objectives, checklists, and structured data collection.
-6. [Handlers](handlers.md) — reference for every `on_*` callback.
+6. [Handlers](handlers.md) — reference for every `handle_*` callback.
 7. [Channels](channels.md) — inbound (phone/WebRTC/SIP), outbound, and running multiple agents.
 8. [Campaigns](campaigns.md) — bulk outbound calling and contact management.
 9. [Messaging](messaging.md) — sending and receiving SMS.
@@ -20,6 +20,7 @@ on HexDocs once published, or via `mix docs`).
 11. [RAG & LLM helpers](rag-and-llm.md) — `DocumentQA`, `IntentRecognizer`, and friends.
 12. [Testing](testing.md) — driving agents in tests without a phone.
 13. [Deployment](deployment.md) — supervision, releases, and production notes.
+14. [Local development](local-development.md) — toolchain setup and no-sudo installs.
 
 See also [`../PARITY.md`](../PARITY.md) for how this port maps to the Python
 SDK and its intentional deviations.
