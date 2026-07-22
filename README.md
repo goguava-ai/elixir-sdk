@@ -43,6 +43,7 @@ Full guides live in [`docs/`](docs/README.md):
 - [RAG & LLM](docs/rag-and-llm.md)
 - [Testing](docs/testing.md)
 - [Deployment](docs/deployment.md)
+- [Local development](docs/local-development.md)
 
 ## Authentication
 
