@@ -147,13 +147,27 @@ Also confirm Hex's `latest_stable_version` == `$NEW_VERSION` and local `main` ==
 `origin/main`.
 
 ## Docs-only refresh (no version bump)
-When only docs changed on an **already-published** version:
+HexDocs is **mutable and independent of a package release** — you can refresh it
+without cutting a new version. Use this when docs changed on an
+**already-published** version:
 ```bash
 mix docs --warnings-as-errors    # must be clean first
-mix hex.publish docs             # refreshes HexDocs for the CURRENT version only
+mix hex.publish docs             # refreshes HexDocs for the CURRENT mix.exs version only
 ```
 This changes neither the tarball nor metadata (metadata changes take effect on the
-next **package** publish).
+next **package** publish). It needs Hex auth + OTP, so it is **human-run**.
+
+**Post-release doc drift — check this every time docs change after a publish.**
+`mix hex.publish` snapshots docs *at publish time*, so any doc commit landing
+after the release leaves the live HexDocs stale (this is easy to miss — e.g. a
+fixed stale callback name or a new handler section won't appear on hexdocs.pm
+until refreshed). Whenever `lib/` docstrings or the `extras:` guides
+(`README.md`, `PARITY.md`, `docs/*.md`) change after the version was published,
+either refresh now with `mix hex.publish docs`, or knowingly let it ride out with
+the next release. Confirm the fix is live (CDN lags a few minutes):
+```bash
+curl -sL "https://hexdocs.pm/guava/$(grep -oP '@version "\K[^"]+' mix.exs)/handlers.html" | grep -c '<expected-new-text>'
+```
 
 ## Rollback / fixing mistakes
 - **Bad Hex release** — unpublish only within the short grace window
@@ -184,6 +198,9 @@ next **package** publish).
 - **Outward-facing writes can be classifier-gated** even with valid creds → be
   ready with a clean, copy-pasteable human handoff.
 - The Elixir version **mirrors** Python; doc-only fixes → docs-only refresh.
+- **HexDocs snapshots at publish time and is refreshable independently** — doc
+  commits made after a release leave the live docs stale until `mix hex.publish
+  docs`. Check for this whenever docs change post-release (see Docs-only refresh).
 
 ## Cheat sheet
 ```bash
