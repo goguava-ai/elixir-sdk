@@ -2,19 +2,16 @@ defmodule Guava.CallTest do
   use ExUnit.Case, async: true
 
   alias Guava.{Call, Field, Say}
-  alias Guava.Test.CommandRecorder
+  alias Guava.Testing.MockCall
 
   defp new_call(call_info \\ %Guava.CallInfo.PSTN{to_number: "+14155550111"}) do
-    {:ok, rec} = CommandRecorder.start_link(self())
-    table = :ets.new(:guava_call_test, [:set, :public])
-
-    %Call{id: "c1", call_info: call_info, server: rec, table: table}
+    MockCall.new(call_info: call_info)
   end
 
   test "set_task converts a mixed checklist into action items" do
-    call = new_call()
+    mock = new_call()
 
-    Call.set_task(call, "collect",
+    Call.set_task(mock.call, "collect",
       objective: "Collect info",
       checklist: [
         Field.new(key: "name", description: "their name"),
@@ -23,7 +20,7 @@ defmodule Guava.CallTest do
       ]
     )
 
-    assert_receive {:command, %{"command_type" => "set-task"} = cmd}, 1000
+    assert [%{"command_type" => "set-task"} = cmd] = MockCall.command_maps(mock)
     assert cmd["task_id"] == "collect"
     [field, todo, say] = cmd["action_items"]
 
@@ -35,21 +32,23 @@ defmodule Guava.CallTest do
   end
 
   test "searchable field maps to is_search_field" do
-    call = new_call()
+    mock = new_call()
 
-    Call.set_task(call, "t",
+    Call.set_task(mock.call, "t",
       checklist: [Field.new(key: "slot", field_type: "multiple_choice", searchable: true)]
     )
 
-    assert_receive {:command, %{"command_type" => "set-task", "action_items" => [item]}}, 1000
+    assert [%{"command_type" => "set-task", "action_items" => [item]}] =
+             MockCall.command_maps(mock)
+
     assert item["is_search_field"] == true
   end
 
   test "reach_person builds a reach_person task with a contact_availability field" do
-    call = new_call()
-    Call.reach_person(call, "John Smith")
+    mock = new_call()
+    Call.reach_person(mock.call, "John Smith")
 
-    assert_receive {:command, %{"command_type" => "set-task"} = cmd}, 1000
+    assert [%{"command_type" => "set-task"} = cmd] = MockCall.command_maps(mock)
     assert cmd["task_id"] == "reach_person"
     assert cmd["objective"] =~ "reach John Smith"
     field = Enum.find(cmd["action_items"], &(&1["item_type"] == "field"))
@@ -58,35 +57,36 @@ defmodule Guava.CallTest do
   end
 
   test "set_variable writes ETS and emits; get_variable/get_field read ETS" do
-    call = new_call()
+    mock = new_call()
+    call = mock.call
     Call.set_variable(call, "customer", %{"name" => "Ada"})
 
-    assert_receive {:command,
-                    %{
-                      "command_type" => "set-variable",
-                      "key" => "customer",
-                      "value" => %{"name" => "Ada"}
-                    }},
-                   1000
+    assert [
+             %{
+               "command_type" => "set-variable",
+               "key" => "customer",
+               "value" => %{"name" => "Ada"}
+             }
+           ] = MockCall.command_maps(mock)
 
     assert Call.get_variable(call, "customer") == %{"name" => "Ada"}
     assert Call.get_field(call, "missing", :default) == :default
 
-    :ets.insert(call.table, {{:field, "email"}, "a@b.com"})
+    MockCall.set_field(mock, "email", "a@b.com")
     assert Call.get_field(call, "email") == "a@b.com"
     assert Call.has_field?(call, "email")
     refute Call.has_field?(call, "nope")
   end
 
   test "set_variable rejects non-JSON values" do
-    call = new_call()
-    assert_raise ArgumentError, fn -> Call.set_variable(call, "bad", {:a, :tuple}) end
+    mock = new_call()
+    assert_raise ArgumentError, fn -> Call.set_variable(mock.call, "bad", {:a, :tuple}) end
   end
 
   test "set_task records the task's field keys in ETS (fields only)" do
-    call = new_call()
+    mock = new_call()
 
-    Call.set_task(call, "collect",
+    Call.set_task(mock.call, "collect",
       checklist: [
         Field.new(key: "name", description: "their name"),
         Field.new(key: "email", description: "their email"),
@@ -96,62 +96,58 @@ defmodule Guava.CallTest do
     )
 
     assert [{{:task_fields, "collect"}, ["name", "email"]}] =
-             :ets.lookup(call.table, {:task_fields, "collect"})
+             :ets.lookup(mock.table, {:task_fields, "collect"})
   end
 
   test "a sensitive field carries sensitive: true onto the wire" do
-    call = new_call()
+    mock = new_call()
 
-    Call.set_task(call, "t",
+    Call.set_task(mock.call, "t",
       checklist: [Field.new(key: "cvv", field_type: "cvv", sensitive: true)]
     )
 
-    assert_receive {:command, %{"command_type" => "set-task", "action_items" => [item]}}, 1000
+    assert [%{"command_type" => "set-task", "action_items" => [item]}] =
+             MockCall.command_maps(mock)
+
     assert item["sensitive"] == true and item["field_type"] == "cvv"
   end
 
-  test "send_dtmf validates digits and emits send-agent-dtmf" do
-    call = new_call()
+  test "send_dtmf validates digits and emits send-agent-dtmf in order" do
+    mock = new_call()
 
-    Call.send_dtmf(call, "123")
+    Call.send_dtmf(mock.call, "123")
+    Call.send_dtmf(mock.call, ["4", "#"])
 
-    assert_receive {:command,
-                    %{"command_type" => "send-agent-dtmf", "digits" => ["1", "2", "3"]}},
-                   1000
+    assert [
+             %{"command_type" => "send-agent-dtmf", "digits" => ["1", "2", "3"]},
+             %{"command_type" => "send-agent-dtmf", "digits" => ["4", "#"]}
+           ] = MockCall.command_maps(mock)
 
-    Call.send_dtmf(call, ["4", "#"])
-
-    assert_receive {:command, %{"command_type" => "send-agent-dtmf", "digits" => ["4", "#"]}},
-                   1000
-
-    assert_raise ArgumentError, fn -> Call.send_dtmf(call, "12x") end
+    assert_raise ArgumentError, fn -> Call.send_dtmf(mock.call, "12x") end
   end
 
   test "DTMF is rejected on WebRTC calls" do
-    call = new_call(%Guava.CallInfo.WebRTC{webrtc_code: "w1"})
+    mock = new_call(%Guava.CallInfo.WebRTC{webrtc_code: "w1"})
 
-    assert_raise ArgumentError, ~r/WebRTC/, fn -> Call.send_dtmf(call, "1") end
-    assert_raise ArgumentError, ~r/WebRTC/, fn -> Call.set_agent_dtmf(call, true) end
+    assert_raise ArgumentError, ~r/WebRTC/, fn -> Call.send_dtmf(mock.call, "1") end
+    assert_raise ArgumentError, ~r/WebRTC/, fn -> Call.set_agent_dtmf(mock.call, true) end
   end
 
-  test "hangup and transfer emit the right commands" do
-    call = new_call()
+  test "hangup and transfer emit the right commands in order" do
+    mock = new_call()
 
-    Call.hangup(call, "Thanks for calling")
+    Call.hangup(mock.call, "Thanks for calling")
+    Call.transfer(mock.call, "+14155559999")
 
-    assert_receive {:command, %{"command_type" => "send-instruction", "instruction" => inst}},
-                   1000
+    assert [
+             %{"command_type" => "send-instruction", "instruction" => inst},
+             %{
+               "command_type" => "transfer-call",
+               "to_number" => "+14155559999",
+               "soft_transfer" => true
+             }
+           ] = MockCall.command_maps(mock)
 
     assert inst =~ "Thanks for calling"
-
-    Call.transfer(call, "+14155559999")
-
-    assert_receive {:command,
-                    %{
-                      "command_type" => "transfer-call",
-                      "to_number" => "+14155559999",
-                      "soft_transfer" => true
-                    }},
-                   1000
   end
 end

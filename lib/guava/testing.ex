@@ -9,12 +9,26 @@ defmodule Guava.Testing do
       end)
 
   Or let an LLM roleplay the caller with `roleplay/3`.
+
+  For fast, offline unit tests of individual callbacks — no network, no LLM —
+  use `Guava.Testing.MockCall` (also reachable as `mock_call/1`):
+
+      mock = Guava.Testing.mock_call()
+      {:noreply, _state} = MyAgent.handle_call_started(mock.call, MyAgent.initial_state())
+      assert [%Guava.Commands.SetTask{task_id: "intake"}] = Guava.Testing.MockCall.commands(mock)
   """
   require Logger
 
-  alias Guava.Testing.Session
+  alias Guava.Testing.{MockCall, Session}
 
   @roleplay_max_turns 20
+
+  @doc """
+  Build an in-memory `Guava.Testing.MockCall` for unit-testing callbacks offline.
+  Convenience for `Guava.Testing.MockCall.new/1`; see that module for the full API.
+  """
+  @spec mock_call(keyword()) :: MockCall.t()
+  def mock_call(opts \\ []), do: MockCall.new(opts)
 
   @doc """
   Run `agent_module` against a live test session and pass the session to `fun`.

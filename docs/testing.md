@@ -55,9 +55,42 @@ This repo excludes `@tag :live` by default; run with `mix test --include live`.
 
 ### Unit-testing your callbacks without the network
 
-Because callbacks are plain functions on a module, most logic is testable
-directly. For a full call loop with recorded commands, drive the internal
-Guava.Call.Runtime with an injected `:emit` function (see the SDK's own
-`test/guava/agent_test.exs`).
+Callbacks are plain functions on your module, so you can call them directly and
+assert on what they do — no phone, no LLM, no live session. `Guava.Testing.MockCall`
+gives you a `Guava.Call` handle that records the commands a handler emits and
+serves field/variable reads from an in-memory store.
+
+```elixir
+test "assigns the intake task on call start" do
+  mock = Guava.Testing.MockCall.new()
+
+  {:noreply, _state} = MyAgent.handle_call_started(mock.call, MyAgent.initial_state())
+
+  assert [%Guava.Commands.SetTask{task_id: "intake"}] =
+           Guava.Testing.MockCall.commands(mock)
+end
+```
+
+Pre-seed fields and variables a handler reads back, then assert on its result:
+
+```elixir
+test "rejects an invalid email" do
+  mock = Guava.Testing.MockCall.new(fields: %{"email" => "nope"})
+
+  assert {:reply, {:error, _reason}, _state} =
+           MyAgent.handle_validate("email", mock.call, "nope", MyAgent.initial_state())
+end
+```
+
+`MockCall` functions: `new/1` (`:id`, `:call_info`, `:fields`, `:variables`),
+`set_field/3`, `put_variable/3`, `commands/1` (structs), `command_maps/1` (wire
+maps), and `clear/1` (drop recorded commands between simulated turns). Pass a
+`%Guava.CallInfo.WebRTC{}` as `:call_info` to exercise WebRTC-only guards.
+
+A mock exercises a handler in isolation; it does not run the call runtime, so
+runtime orchestration (e.g. validators firing automatically when a task
+completes) belongs in a live `session/3` test. For a full call loop with
+recorded commands, drive the internal Guava.Call.Runtime with an injected
+`:emit` function (see the SDK's own `test/guava/agent_test.exs`).
 
 Next: [Deployment](deployment.md).

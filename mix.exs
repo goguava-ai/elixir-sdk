@@ -3,7 +3,7 @@ defmodule Guava.MixProject do
 
   # Tracks the Python `guava-sdk` version this port mirrors (source of truth).
   # Bump in lockstep with the Python SDK; see PARITY.md and the README.
-  @version "0.35.0"
+  @version "0.35.1"
   @source_url "https://github.com/goguava-ai/elixir-sdk"
 
   def project do

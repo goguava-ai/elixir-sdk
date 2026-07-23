@@ -1,7 +1,7 @@
 # Parity with the Python SDK
 
 Ground truth is the Python [`guava-sdk`](https://github.com/goguava-ai/python-sdk)
-(v0.35.0). This Elixir port keeps the same
+(v0.35.1). This Elixir port keeps the same
 concepts and wire protocol but adapts the **public API to idiomatic Elixir**
 (there are no users, so this was a deliberate design choice, not a constraint).
 
@@ -15,6 +15,7 @@ concepts and wire protocol but adapts the **public API to idiomatic Elixir**
 | `guava.Runner` | `Guava.Channel` + `Guava.run/1` | supervised channel child specs; blocking helpers on `Guava` |
 | decorators (`on_question`, `on_action`, …) | callbacks (`handle_question/3`, `handle_action/3`, …) | per-key handlers are one pattern-matched callback |
 | `Agent.test` / `test_roleplay` | `Guava.Testing.session/3` / `roleplay/3` | module-based |
+| `guava.testing.MockCall` | `Guava.Testing.MockCall` | offline handler unit tests; a `%Guava.Call{}` wired to a recorder process + seeded ETS, not a `Call` subclass |
 | `guava.Field`/`Say`/`Todo` | `Guava.Field`/`Guava.Say`/`Guava.Todo` | |
 | `CallInfo`, `IncomingCallAction`, `SuggestedAction` | same under `Guava.*` | `handle_call_received` returns bare `:accept`/`:decline` |
 | events / commands | `Guava.Events.*` / `Guava.Commands.*` | byte-identical wire format |
